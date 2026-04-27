@@ -26,25 +26,7 @@ warnings.filterwarnings("ignore")
 
 st.set_page_config(page_title="Football Analytics Pro 2025-2026", page_icon="", layout="wide", initial_sidebar_state="expanded")
 
-# Password protection
-def check_password():
-    if "authenticated" not in st.session_state:
-        st.session_state.authenticated = False
-    if not st.session_state.authenticated:
-        st.markdown("## Football Analytics Pro")
-        st.markdown("Enter password to access the dashboard.")
-        pwd = st.text_input("Password", type="password", key="pwd_input")
-        if pwd:
-            if pwd == st.secrets.get("password", ""):
-                st.session_state.authenticated = True
-                st.rerun()
-            else:
-                st.error("Wrong password.")
-        st.stop()
-
-check_password()
-
-#  Custom CSS 
+#  Custom CSS
 st.markdown("""<style>
 .stMetric {background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 10px; border-radius: 10px; color: white;}
 .stMetric label {color: white !important;}
