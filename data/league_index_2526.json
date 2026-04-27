@@ -1,0 +1,96 @@
+{
+  "season": "2025-2026",
+  "leagues": {
+    "English Premier League": {
+      "league_id": 4328,
+      "teams_count": 20,
+      "players_count": 200,
+      "standings_file": "standings_2526_4328.json",
+      "events_file": "events_2526_4328.json"
+    },
+    "La Liga": {
+      "league_id": 4335,
+      "teams_count": 20,
+      "players_count": 200,
+      "standings_file": "standings_2526_4335.json",
+      "events_file": "events_2526_4335.json"
+    },
+    "Serie A": {
+      "league_id": 4332,
+      "teams_count": 20,
+      "players_count": 110,
+      "standings_file": "standings_2526_4332.json",
+      "events_file": "events_2526_4332.json"
+    },
+    "Bundesliga": {
+      "league_id": 4331,
+      "teams_count": 18,
+      "players_count": 80,
+      "standings_file": "standings_2526_4331.json",
+      "events_file": "events_2526_4331.json"
+    },
+    "Ligue 1": {
+      "league_id": 4334,
+      "teams_count": 18,
+      "players_count": 180,
+      "standings_file": "standings_2526_4334.json",
+      "events_file": "events_2526_4334.json"
+    },
+    "Eredivisie": {
+      "league_id": 4337,
+      "teams_count": 18,
+      "players_count": 100,
+      "standings_file": "standings_2526_4337.json",
+      "events_file": "events_2526_4337.json"
+    },
+    "Primeira Liga": {
+      "league_id": 4344,
+      "teams_count": 5,
+      "players_count": 0,
+      "standings_file": "standings_2526_4344.json",
+      "events_file": "events_2526_4344.json"
+    },
+    "Turkish Super Lig": {
+      "league_id": 4339,
+      "teams_count": 5,
+      "players_count": 50,
+      "standings_file": "standings_2526_4339.json",
+      "events_file": "events_2526_4339.json"
+    },
+    "Belgian Pro League": {
+      "league_id": 4355,
+      "teams_count": 5,
+      "players_count": 40,
+      "standings_file": "standings_2526_4355.json",
+      "events_file": null
+    },
+    "Scottish Premiership": {
+      "league_id": 4330,
+      "teams_count": 5,
+      "players_count": 40,
+      "standings_file": "standings_2526_4330.json",
+      "events_file": "events_2526_4330.json"
+    },
+    "Austrian Bundesliga": {
+      "league_id": 4340,
+      "teams_count": 5,
+      "players_count": 10,
+      "standings_file": "standings_2526_4340.json",
+      "events_file": null
+    },
+    "Romanian Liga I": {
+      "league_id": 4691,
+      "teams_count": 5,
+      "players_count": 47,
+      "standings_file": "standings_2526_4691.json",
+      "events_file": "events_2526_4691.json"
+    },
+    "Romanian Liga II": {
+      "league_id": 4665,
+      "teams_count": 21,
+      "players_count": 46,
+      "standings_file": "standings_2526_4665.json",
+      "events_file": "events_2526_4665.json"
+    }
+  }
+}

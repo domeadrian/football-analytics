@@ -1,0 +1,482 @@
+[
+  {
+    "name": "Ștefan Târnovanu",
+    "position": "Goalkeeper",
+    "dob": "",
+    "age": "",
+    "nationality": "Romania",
+    "market_value": "€3.80m"
+  },
+  {
+    "name": "Ștefan Târnovanu",
+    "position": "Ștefan Târnovanu",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Lukas Zima",
+    "position": "Goalkeeper",
+    "dob": "",
+    "age": "",
+    "nationality": "Czech Republic",
+    "market_value": "€700k"
+  },
+  {
+    "name": "Lukas Zima",
+    "position": "Lukas Zima",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Matei Popa",
+    "position": "Goalkeeper",
+    "dob": "",
+    "age": "",
+    "nationality": "Romania",
+    "market_value": "€250k"
+  },
+  {
+    "name": "Matei Popa",
+    "position": "Matei Popa",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Mihai Udrea",
+    "position": "Goalkeeper",
+    "dob": "",
+    "age": "",
+    "nationality": "Romania",
+    "market_value": "€50k"
+  },
+  {
+    "name": "Mihai Udrea",
+    "position": "Mihai Udrea",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Siyabonga Ngezana",
+    "position": "Centre-Back",
+    "dob": "",
+    "age": "",
+    "nationality": "South Africa",
+    "market_value": "€2.60m"
+  },
+  {
+    "name": "Siyabonga Ngezana",
+    "position": "Siyabonga Ngezana",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Joyskim Dawa",
+    "position": "Centre-Back",
+    "dob": "",
+    "age": "",
+    "nationality": "Cameroon",
+    "market_value": "€2.00m"
+  },
+  {
+    "name": "Joyskim Dawa",
+    "position": "Joyskim Dawa",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "André Duarte",
+    "position": "Centre-Back",
+    "dob": "",
+    "age": "",
+    "nationality": "Portugal",
+    "market_value": "€800k"
+  },
+  {
+    "name": "André Duarte",
+    "position": "André Duarte",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Mihai Popescu",
+    "position": "Centre-Back",
+    "dob": "",
+    "age": "",
+    "nationality": "Romania",
+    "market_value": "€800k"
+  },
+  {
+    "name": "Mihai Popescu",
+    "position": "Mihai Popescu",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Daniel Graovac",
+    "position": "Centre-Back",
+    "dob": "",
+    "age": "",
+    "nationality": "Bosnia-Herzegovina",
+    "market_value": "€450k"
+  },
+  {
+    "name": "Daniel Graovac",
+    "position": "Daniel Graovac",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Andrei Dăncuș",
+    "position": "Centre-Back",
+    "dob": "",
+    "age": "",
+    "nationality": "Romania",
+    "market_value": "-"
+  },
+  {
+    "name": "Andrei Dăncuș",
+    "position": "Andrei Dăncuș",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Risto Radunovic",
+    "position": "Left-Back",
+    "dob": "",
+    "age": "",
+    "nationality": "Montenegro",
+    "market_value": "€800k"
+  },
+  {
+    "name": "Risto Radunovic",
+    "position": "Risto Radunovic",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "David Kiki",
+    "position": "Left-Back",
+    "dob": "",
+    "age": "",
+    "nationality": "Benin",
+    "market_value": "€400k"
+  },
+  {
+    "name": "David Kiki",
+    "position": "David Kiki",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Alexandru Pantea",
+    "position": "Right-Back",
+    "dob": "",
+    "age": "",
+    "nationality": "Romania",
+    "market_value": "€850k"
+  },
+  {
+    "name": "Alexandru Pantea",
+    "position": "Alexandru Pantea",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Ionuț Cercel",
+    "position": "Right-Back",
+    "dob": "",
+    "age": "",
+    "nationality": "Romania",
+    "market_value": "€500k"
+  },
+  {
+    "name": "Ionuț Cercel",
+    "position": "Ionuț Cercel",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Valentin Crețu",
+    "position": "Right-Back",
+    "dob": "",
+    "age": "",
+    "nationality": "Romania",
+    "market_value": "€150k"
+  },
+  {
+    "name": "Valentin Crețu",
+    "position": "Valentin Crețu",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Ofri Arad",
+    "position": "Defensive Midfield",
+    "dob": "",
+    "age": "",
+    "nationality": "Israel",
+    "market_value": "€1.20m"
+  },
+  {
+    "name": "Ofri Arad",
+    "position": "Ofri Arad",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Baba Alhassan",
+    "position": "Defensive Midfield",
+    "dob": "",
+    "age": "",
+    "nationality": "Uganda",
+    "market_value": "€900k"
+  },
+  {
+    "name": "Baba Alhassan",
+    "position": "Baba Alhassan",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "João Paulo",
+    "position": "Defensive Midfield",
+    "dob": "",
+    "age": "",
+    "nationality": "Cape Verde",
+    "market_value": "€700k"
+  },
+  {
+    "name": "João Paulo",
+    "position": "João Paulo",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Vlad Chiricheș",
+    "position": "Defensive Midfield",
+    "dob": "",
+    "age": "",
+    "nationality": "Romania",
+    "market_value": "€250k"
+  },
+  {
+    "name": "Vlad Chiricheș",
+    "position": "Vlad Chiricheș",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Mihai Lixandru",
+    "position": "Central Midfield",
+    "dob": "",
+    "age": "",
+    "nationality": "Romania",
+    "market_value": "€1.00m"
+  },
+  {
+    "name": "Mihai Lixandru",
+    "position": "Mihai Lixandru",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Juri Cisotti",
+    "position": "Central Midfield",
+    "dob": "",
+    "age": "",
+    "nationality": "Italy",
+    "market_value": "€800k"
+  },
+  {
+    "name": "Juri Cisotti",
+    "position": "Juri Cisotti",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Mihai Toma",
+    "position": "Left Midfield",
+    "dob": "",
+    "age": "",
+    "nationality": "Romania",
+    "market_value": "€500k"
+  },
+  {
+    "name": "Mihai Toma",
+    "position": "Mihai Toma",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Darius Olaru",
+    "position": "Attacking Midfield",
+    "dob": "",
+    "age": "",
+    "nationality": "Romania",
+    "market_value": "€5.00m"
+  },
+  {
+    "name": "Darius Olaru",
+    "position": "Darius Olaru",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Florin Tănase",
+    "position": "Attacking Midfield",
+    "dob": "",
+    "age": "",
+    "nationality": "Romania",
+    "market_value": "€2.00m"
+  },
+  {
+    "name": "Florin Tănase",
+    "position": "Florin Tănase",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Octavian Popescu",
+    "position": "Left Winger",
+    "dob": "",
+    "age": "",
+    "nationality": "Romania",
+    "market_value": "€600k"
+  },
+  {
+    "name": "Octavian Popescu",
+    "position": "Octavian Popescu",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "David Miculescu",
+    "position": "Right Winger",
+    "dob": "",
+    "age": "",
+    "nationality": "Romania",
+    "market_value": "€2.50m"
+  },
+  {
+    "name": "David Miculescu",
+    "position": "David Miculescu",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "David Popa",
+    "position": "Right Winger",
+    "dob": "",
+    "age": "",
+    "nationality": "Romania",
+    "market_value": "€50k"
+  },
+  {
+    "name": "David Popa",
+    "position": "David Popa",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Daniel Bîrligea",
+    "position": "Centre-Forward",
+    "dob": "",
+    "age": "",
+    "nationality": "Romania",
+    "market_value": "€4.50m"
+  },
+  {
+    "name": "Daniel Bîrligea",
+    "position": "Daniel Bîrligea",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Mamadou Thiam",
+    "position": "Centre-Forward",
+    "dob": "",
+    "age": "",
+    "nationality": "Senegal",
+    "market_value": "€900k"
+  },
+  {
+    "name": "Mamadou Thiam",
+    "position": "Mamadou Thiam",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  },
+  {
+    "name": "Alexandru Stoian",
+    "position": "Centre-Forward",
+    "dob": "",
+    "age": "",
+    "nationality": "Romania",
+    "market_value": "€650k"
+  },
+  {
+    "name": "Alexandru Stoian",
+    "position": "Alexandru Stoian",
+    "dob": "",
+    "age": "",
+    "nationality": "",
+    "market_value": ""
+  }
+]
