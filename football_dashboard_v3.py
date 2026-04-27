@@ -335,6 +335,7 @@ pages = [
     " League Management",
     " Video Analysis Hub",
     " Data Sources",
+    " Documentation",
 ]
 page = st.sidebar.radio("Section", pages)
 st.sidebar.markdown("---")
@@ -1949,4 +1950,370 @@ elif page == " Data Sources":
 3. Hvattum, L. & Arntzen, H. (2010). "Using ELO ratings for match result prediction." *IJF*, 26(3), 460-470.
 4. Elo, A. (1978). "The Rating of Chessplayers, Past and Present." Arco Publishing.
 5. MacQueen, J. (1967). "Some methods for classification and analysis of multivariate observations." *Berkeley Symposium*.
+""")
+
+# =====================================================
+# PAGE: Documentation / Documentatie
+# =====================================================
+elif page == " Documentation":
+    lang = st.radio("Language / Limba", ["English", "Romana"], horizontal=True)
+
+    if lang == "English":
+        st.title("Documentation")
+        st.markdown("""---""")
+
+        st.header("About This Platform")
+        st.markdown("""
+**Football Analytics Pro** is a professional-grade analytics dashboard for the **2025-2026 season**, 
+covering **15 European leagues**. It was built as an all-in-one tool that a football club's 
+analysis department could use for scouting, match preparation, transfer planning, and strategic decisions.
+
+The platform pulls data from three sources:
+- **TheSportsDB** -- standings, match events, team and player profiles
+- **Football-Data.org** -- competition metadata
+- **Transfermarkt** -- player market values and ages (scraped)
+""")
+
+        st.header("Pages & Features")
+
+        st.subheader("1. Overview & Standings")
+        st.markdown("""
+Displays the full league table for each of the 15 leagues. Includes playoff/playout zone highlighting 
+(where applicable), recent form indicators, points distribution charts, and a description of each 
+league's format (e.g. Romania's championship round, Belgian playoff system).
+""")
+
+        st.subheader("2. Match Analysis")
+        st.markdown("""
+A head-to-head comparison tool. Select two teams and see their full match history, outcome distributions 
+(pie charts), goal timing analysis (which half the goals happen in), home advantage statistics, 
+biggest wins, and highest-scoring matches.
+""")
+
+        st.subheader("3. Championship Probability")
+        st.markdown("""
+Runs a **Monte Carlo simulation** (10,000+ iterations) for each league. Based on each team's current 
+win/draw/loss rates and remaining matches, it simulates how the season could end. Shows probabilities 
+for winning the title, finishing in playoff positions, or being relegated.
+""")
+
+        st.subheader("4. European Comparison")
+        st.markdown("""
+Compares all 15 leagues against each other. Includes competitiveness analysis (how close the league 
+table is), scoring trends, a UEFA-style league coefficient estimate, squad valuations, and 
+radar charts for cross-league benchmarking.
+""")
+
+        st.subheader("5. Player Analysis")
+        st.markdown("""
+A full player database with filters by position and nationality. Shows age distributions, 
+position breakdowns, a player-vs-player comparison tool, and a scatter plot of each team's 
+attacking vs defensive player count.
+""")
+
+        st.subheader("6. Scouting Intelligence")
+        st.markdown("""
+Five tabs for talent identification:
+- **Wonderkid Radar** -- finds the best U21 players with a potential score
+- **Smart Scout** -- custom filters (age range, position, league, value)
+- **Similar Players** -- input a player and find comparable profiles
+- **Best XI Generator** -- builds an optimal team in a chosen formation from available players
+- **Value Trends** -- market value distribution by position across leagues
+""")
+
+        st.subheader("7. Tactical Analysis")
+        st.markdown("""
+Five tabs covering:
+- **Home/Away Split** -- points-per-game at home vs away
+- **Scoring Patterns** -- goals scored by matchday/round
+- **xG Analysis** -- expected goals calculated using a Poisson model
+- **Formation Estimator** -- estimates each team's likely formation from squad composition
+- **Momentum Tracker** -- cumulative points chart showing each team's trajectory through the season
+""")
+
+        st.subheader("8. Opponent Report")
+        st.markdown("""
+Pre-match intelligence tool. Select your team and the opponent, and the system generates:
+- A strength comparison radar chart
+- Identified opponent weaknesses
+- A match prediction using the xG model
+- Full squad comparison metrics
+""")
+
+        st.subheader("9. Transfer Recommendations")
+        st.markdown("""
+Four tabs:
+- **Squad Audit** -- current squad composition and statistics
+- **Transfer Needs** -- identifies gaps in the squad and suggests targets from other leagues
+- **Players to Sell** -- flags aging or surplus players for potential sales
+- **Cross-League Scout** -- finds the best value-for-money players across all 15 leagues
+""")
+
+        st.subheader("10. Physical & Medical")
+        st.markdown("""
+Four tabs:
+- **Squad Fitness Profile** -- maps players by age and position to estimate fitness risk
+- **Injury Risk Assessment** -- scores each position's injury risk based on age, squad depth, and workload
+- **Fixture Congestion** -- analyzes the spacing between matches to flag fatigue risk periods
+- **Rotation Planner** -- recommends which positions need more depth for rotation
+""")
+
+        st.subheader("11. Youth Academy")
+        st.markdown("""
+Four tabs:
+- **U21 Tracker** -- counts and lists all players under 21 by club
+- **Development Potential** -- scores young players on a growth ceiling metric
+- **Academy Comparison** -- compares youth squad strength across clubs
+- **Youth Nationality Map** -- shows where young talent comes from geographically
+""")
+
+        st.subheader("12. Financial Analysis")
+        st.markdown("""
+Four tabs:
+- **Squad Valuation** -- total market value by club
+- **Wage Analysis** -- market value distribution broken down by position
+- **Transfer ROI** -- how efficiently a club converts squad value into league points
+- **FFP Compliance** -- a Financial Fair Play risk assessment based on squad value concentration
+""")
+
+        st.subheader("13. Season Projections")
+        st.markdown("""
+Four tabs:
+- **ELO Ratings** -- calculates an Elo-based team strength rating from match results
+- **Final Table Projection** -- extrapolates the current points-per-game to predict final standings
+- **Points Trajectory** -- plots cumulative points over the season for all teams
+- **Race Tracker** -- monitors the title race and relegation battle with projected safe/danger thresholds
+""")
+
+        st.subheader("14. ML Prediction Models")
+        st.markdown("""
+Four machine learning models:
+- **Team Clustering (K-Means)** -- groups teams into performance tiers
+- **Points Predictor (Linear Regression)** -- predicts final points from current stats
+- **Match Predictor (Poisson + League Strength)** -- calculates match outcome probabilities
+- **Random Forest Classifier** -- identifies the most important features for predicting match results
+""")
+
+        st.subheader("15. Advanced Statistics")
+        st.markdown("""
+Four tabs:
+- **Poisson Model** -- goal probability distributions for each team
+- **Expected Points (xPts)** -- compares actual points earned to what was statistically expected
+- **Form Analysis** -- compares recent form to season-long average
+- **Consistency Index** -- measures how consistent each team's results are (low standard deviation = consistent)
+""")
+
+        st.subheader("16. League Management")
+        st.markdown("""
+Four tabs:
+- **Referee Statistics** -- average goals per match by referee
+- **Venue Analysis** -- identifies the highest-scoring stadiums
+- **Fixture Schedule** -- matches played by month and upcoming fixture list
+- **Attendance Tracker** -- average home attendance estimates
+""")
+
+        st.subheader("17. Video Analysis Hub")
+        st.markdown("""
+Three tabs:
+- **Match Highlights** -- video library with links to match footage
+- **Key Moments** -- identifies the closest matches and key statistical breakdowns
+- **Set Piece Analysis** -- flags teams scoring below the median as candidates for set piece coaching improvement
+""")
+
+        st.subheader("18. Data Sources")
+        st.markdown("""
+Lists all data sources used, the leagues covered, a summary table of all platform modules, 
+and academic references for the statistical methods (Poisson, Elo, K-Means, etc.).
+""")
+
+        st.header("Technical Details")
+        st.markdown("""
+- **Framework:** Streamlit (Python)
+- **Visualization:** Plotly (interactive charts)
+- **Machine Learning:** scikit-learn (K-Means, Random Forest, Linear Regression)
+- **Statistics:** SciPy (Poisson distributions, percentile calculations)
+- **Data format:** JSON files stored in the `data/` folder
+- **Season:** 2025-2026
+- **Leagues:** 15 European leagues (EPL, La Liga, Bundesliga, Serie A, Ligue 1, Primeira Liga, Eredivisie, Belgian Pro League, Super Lig, and 6 more)
+""")
+
+    else:
+        st.title("Documentatie")
+        st.markdown("""---""")
+
+        st.header("Despre Platforma")
+        st.markdown("""
+**Football Analytics Pro** este un dashboard profesional de analiza fotbalistica pentru **sezonul 2025-2026**, 
+acoperind **15 ligi europene**. A fost construit ca un instrument complet pe care departamentul de analiza 
+al unui club de fotbal l-ar putea folosi pentru scouting, pregatirea meciurilor, planificarea transferurilor 
+si decizii strategice.
+
+Platforma preia date din trei surse:
+- **TheSportsDB** -- clasamente, evenimente de meci, profiluri de echipe si jucatori
+- **Football-Data.org** -- metadate despre competitii
+- **Transfermarkt** -- valori de piata si varste ale jucatorilor (preluate automat)
+""")
+
+        st.header("Pagini si Functionalitati")
+
+        st.subheader("1. Overview & Standings (Clasamente)")
+        st.markdown("""
+Afiseaza clasamentul complet pentru fiecare din cele 15 ligi. Include evidentierea zonelor de playoff/playout 
+(unde este cazul), indicatori de forma recenta, grafice de distributie a punctelor si o descriere a 
+formatului fiecarei ligi (ex: turneul campionatului din Romania, sistemul de playoff belgian).
+""")
+
+        st.subheader("2. Match Analysis (Analiza Meciurilor)")
+        st.markdown("""
+Instrument de comparare directa. Selecteaza doua echipe si vezi istoricul complet al meciurilor, 
+distributia rezultatelor (grafice pie), analiza timpului golurilor (in ce repriza se marcheaza), 
+statistici de avantaj al gazdei, cele mai mari victorii si meciurile cu cele mai multe goluri.
+""")
+
+        st.subheader("3. Championship Probability (Probabilitate Campionat)")
+        st.markdown("""
+Ruleaza o **simulare Monte Carlo** (10.000+ iteratii) pentru fiecare liga. Pe baza ratelor actuale de 
+victorii/egaluri/infrangeri si a meciurilor ramase, simuleaza cum s-ar putea termina sezonul. Arata 
+probabilitatile de castigare a titlului, calificare in playoff sau retrogradare.
+""")
+
+        st.subheader("4. European Comparison (Comparatie Europeana)")
+        st.markdown("""
+Compara toate cele 15 ligi intre ele. Include analiza competitivitatii (cat de strans este clasamentul), 
+tendinte de goluri marcate, un coeficient de liga in stil UEFA, valorile loturilor si grafice radar 
+pentru comparatii intre ligi.
+""")
+
+        st.subheader("5. Player Analysis (Analiza Jucatorilor)")
+        st.markdown("""
+Baza de date completa a jucatorilor cu filtre dupa pozitie si nationalitate. Afiseaza distributia 
+varselor, distributia pe pozitii, un instrument de comparare jucator-vs-jucator si un grafic scatter 
+al numarului de jucatori ofensivi vs defensivi per echipa.
+""")
+
+        st.subheader("6. Scouting Intelligence (Scouting Inteligent)")
+        st.markdown("""
+Cinci tab-uri pentru identificarea talentului:
+- **Wonderkid Radar** -- gaseste cei mai buni jucatori U21 cu un scor de potential
+- **Smart Scout** -- filtre personalizate (interval de varsta, pozitie, liga, valoare)
+- **Similar Players** -- introdu un jucator si gaseste profiluri comparabile
+- **Best XI Generator** -- construieste echipa optima intr-o formatie aleasa din jucatorii disponibili
+- **Value Trends** -- distributia valorii de piata pe pozitii in toate ligile
+""")
+
+        st.subheader("7. Tactical Analysis (Analiza Tactica)")
+        st.markdown("""
+Cinci tab-uri:
+- **Home/Away Split** -- puncte pe meci acasa vs deplasare
+- **Scoring Patterns** -- goluri marcate pe etapa
+- **xG Analysis** -- goluri asteptate calculate cu un model Poisson
+- **Formation Estimator** -- estimeaza formatia probabila a fiecarei echipe din compozitia lotului
+- **Momentum Tracker** -- grafic de puncte cumulate aratand traiectoria fiecarei echipe pe parcursul sezonului
+""")
+
+        st.subheader("8. Opponent Report (Raport Adversar)")
+        st.markdown("""
+Instrument de informatii pre-meci. Selecteaza echipa ta si adversarul, iar sistemul genereaza:
+- Un grafic radar de comparare a punctelor forte
+- Punctele slabe identificate ale adversarului
+- O predictie a meciului folosind modelul xG
+- Metrici complete de comparare a loturilor
+""")
+
+        st.subheader("9. Transfer Recommendations (Recomandari Transferuri)")
+        st.markdown("""
+Patru tab-uri:
+- **Squad Audit** -- compozitia si statisticile lotului curent
+- **Transfer Needs** -- identifica lacunele din lot si sugereaza tinte din alte ligi
+- **Players to Sell** -- semnaleaza jucatorii in varsta sau in surplus pentru vanzari potentiale
+- **Cross-League Scout** -- gaseste jucatorii cu cel mai bun raport calitate-pret din toate cele 15 ligi
+""")
+
+        st.subheader("10. Physical & Medical (Fizic si Medical)")
+        st.markdown("""
+Patru tab-uri:
+- **Squad Fitness Profile** -- harta jucatorilor dupa varsta si pozitie pentru estimarea riscului de fitness
+- **Injury Risk Assessment** -- scor de risc de accidentare bazat pe varsta, adancimea lotului si efort
+- **Fixture Congestion** -- analizeaza spatiul dintre meciuri pentru a semnala perioadele de risc de oboseala
+- **Rotation Planner** -- recomanda pozitiile care au nevoie de mai multa adancime pentru rotatie
+""")
+
+        st.subheader("11. Youth Academy (Academia de Juniori)")
+        st.markdown("""
+Patru tab-uri:
+- **U21 Tracker** -- numara si listeaza toti jucatorii sub 21 de ani pe club
+- **Development Potential** -- scor de potential de crestere pentru jucatorii tineri
+- **Academy Comparison** -- compara puterea loturilor de tineret intre cluburi
+- **Youth Nationality Map** -- arata de unde provin tinerii talentati din punct de vedere geografic
+""")
+
+        st.subheader("12. Financial Analysis (Analiza Financiara)")
+        st.markdown("""
+Patru tab-uri:
+- **Squad Valuation** -- valoarea totala de piata pe club
+- **Wage Analysis** -- distributia valorii de piata pe pozitii
+- **Transfer ROI** -- cat de eficient converteste un club valoarea lotului in puncte
+- **FFP Compliance** -- evaluare de risc Financial Fair Play bazata pe concentrarea valorii lotului
+""")
+
+        st.subheader("13. Season Projections (Proiectii Sezon)")
+        st.markdown("""
+Patru tab-uri:
+- **ELO Ratings** -- calculeaza un rating de putere al echipei in stil Elo din rezultatele meciurilor
+- **Final Table Projection** -- extrapoleaza punctele actuale per meci pentru a prezice clasamentul final
+- **Points Trajectory** -- grafic de puncte cumulate pe parcursul sezonului pentru toate echipele
+- **Race Tracker** -- monitorizeaza cursa pentru titlu si lupta pentru evitarea retrogradarii
+""")
+
+        st.subheader("14. ML Prediction Models (Modele ML de Predictie)")
+        st.markdown("""
+Patru modele de machine learning:
+- **Team Clustering (K-Means)** -- grupeaza echipele in niveluri de performanta
+- **Points Predictor (Linear Regression)** -- prezice punctele finale din statisticile curente
+- **Match Predictor (Poisson + League Strength)** -- calculeaza probabilitatile rezultatelor meciurilor
+- **Random Forest Classifier** -- identifica cele mai importante caracteristici pentru prezicerea rezultatelor
+""")
+
+        st.subheader("15. Advanced Statistics (Statistici Avansate)")
+        st.markdown("""
+Patru tab-uri:
+- **Poisson Model** -- distributii de probabilitate a golurilor pentru fiecare echipa
+- **Expected Points (xPts)** -- compara punctele reale cu cele asteptate statistic
+- **Form Analysis** -- compara forma recenta cu media sezonului
+- **Consistency Index** -- masoara cat de consistente sunt rezultatele fiecarei echipe
+""")
+
+        st.subheader("16. League Management (Managementul Ligii)")
+        st.markdown("""
+Patru tab-uri:
+- **Referee Statistics** -- media golurilor pe meci per arbitru
+- **Venue Analysis** -- identifica stadioanele cu cele mai multe goluri
+- **Fixture Schedule** -- meciuri jucate pe luna si lista urmatoarelor meciuri
+- **Attendance Tracker** -- estimari de audienta medie acasa
+""")
+
+        st.subheader("17. Video Analysis Hub (Centru Analiza Video)")
+        st.markdown("""
+Trei tab-uri:
+- **Match Highlights** -- biblioteca video cu linkuri catre filmari de meci
+- **Key Moments** -- identifica cele mai stranse meciuri si detalii statistice cheie
+- **Set Piece Analysis** -- semnaleaza echipele care marcheaza sub medie ca fiind candidate 
+  pentru imbunatatirea jocului la fazele fixe
+""")
+
+        st.subheader("18. Data Sources (Surse de Date)")
+        st.markdown("""
+Listeaza toate sursele de date folosite, ligile acoperite, un tabel rezumat al tuturor modulelor 
+platformei si referinte academice pentru metodele statistice (Poisson, Elo, K-Means etc.).
+""")
+
+        st.header("Detalii Tehnice")
+        st.markdown("""
+- **Framework:** Streamlit (Python)
+- **Vizualizare:** Plotly (grafice interactive)
+- **Machine Learning:** scikit-learn (K-Means, Random Forest, Linear Regression)
+- **Statistici:** SciPy (distributii Poisson, calcule de percentile)
+- **Format date:** Fisiere JSON stocate in folderul `data/`
+- **Sezon:** 2025-2026
+- **Ligi:** 15 ligi europene (EPL, La Liga, Bundesliga, Serie A, Ligue 1, Primeira Liga, Eredivisie, Belgian Pro League, Super Lig si altele)
 """)
