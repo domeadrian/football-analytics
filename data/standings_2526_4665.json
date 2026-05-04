@@ -1,7 +1,7 @@
 {
   "table": [
     {
-      "idStanding": "9415615",
+      "idStanding": "9476022",
       "intRank": "1",
       "idTeam": "147629",
       "strTeam": "Corvinul Hunedoara",
@@ -19,10 +19,10 @@
       "intGoalsAgainst": "13",
       "intGoalDifference": "24",
       "intPoints": "53",
-      "dateUpdated": "2026-04-24 23:01:11"
+      "dateUpdated": "2026-05-03 23:01:03"
     },
     {
-      "idStanding": "9415616",
+      "idStanding": "9476023",
       "intRank": "2",
       "idTeam": "138192",
       "strTeam": "Sepsi OSK",
@@ -40,10 +40,10 @@
       "intGoalsAgainst": "18",
       "intGoalDifference": "16",
       "intPoints": "44",
-      "dateUpdated": "2026-04-24 23:01:11"
+      "dateUpdated": "2026-05-03 23:01:03"
     },
     {
-      "idStanding": "9415617",
+      "idStanding": "9476024",
       "intRank": "3",
       "idTeam": "138195",
       "strTeam": "Chindia Târgoviște",
@@ -61,10 +61,10 @@
       "intGoalsAgainst": "20",
       "intGoalDifference": "18",
       "intPoints": "39",
-      "dateUpdated": "2026-04-24 23:01:11"
+      "dateUpdated": "2026-05-03 23:01:03"
     },
     {
-      "idStanding": "9415618",
+      "idStanding": "9476025",
       "intRank": "4",
       "idTeam": "149582",
       "strTeam": "Bihor Oradea",
@@ -82,10 +82,10 @@
       "intGoalsAgainst": "24",
       "intGoalDifference": "16",
       "intPoints": "39",
-      "dateUpdated": "2026-04-24 23:01:11"
+      "dateUpdated": "2026-05-03 23:01:03"
     },
     {
-      "idStanding": "9415619",
+      "idStanding": "9476026",
       "intRank": "5",
       "idTeam": "138197",
       "strTeam": "Voluntari",
@@ -103,7 +103,7 @@
       "intGoalsAgainst": "16",
       "intGoalDifference": "14",
       "intPoints": "39",
-      "dateUpdated": "2026-04-24 23:01:11"
+      "dateUpdated": "2026-05-03 23:01:03"
     }
   ]
 }

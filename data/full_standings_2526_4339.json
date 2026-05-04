@@ -238,5 +238,6 @@
   "league_id": 4339,
   "league_name": "Turkish Super Lig",
   "no_resort": true,
-  "updated_at": "2026-04-25T10:55:13.593756"
+  "is_split_active": false,
+  "updated_at": "2026-05-04T17:03:43.339407"
 }

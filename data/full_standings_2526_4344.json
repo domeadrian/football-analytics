@@ -238,5 +238,6 @@
   "league_id": 4344,
   "league_name": "Primeira Liga",
   "no_resort": true,
-  "updated_at": "2026-04-25T10:55:03.874337"
+  "is_split_active": false,
+  "updated_at": "2026-05-04T17:03:17.434341"
 }

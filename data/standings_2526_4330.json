@@ -1,7 +1,7 @@
 {
   "table": [
     {
-      "idStanding": "9417448",
+      "idStanding": "9473760",
       "intRank": "1",
       "idTeam": "133643",
       "strTeam": "Heart of Midlothian",
@@ -9,7 +9,7 @@
       "idLeague": "4330",
       "strLeague": "Scottish Premier League",
       "strSeason": "2025-2026",
-      "strForm": "WDWLW",
+      "strForm": "WWDWL",
       "strDescription": "Championship round",
       "intPlayed": "33",
       "intWin": "21",
@@ -19,10 +19,10 @@
       "intGoalsAgainst": "28",
       "intGoalDifference": "30",
       "intPoints": "70",
-      "dateUpdated": "2026-04-24 23:01:35"
+      "dateUpdated": "2026-05-03 23:00:28"
     },
     {
-      "idStanding": "9417449",
+      "idStanding": "9473761",
       "intRank": "2",
       "idTeam": "133642",
       "strTeam": "Rangers",
@@ -30,7 +30,7 @@
       "idLeague": "4330",
       "strLeague": "Scottish Premier League",
       "strSeason": "2025-2026",
-      "strForm": "WWWWD",
+      "strForm": "LWWWW",
       "strDescription": "Championship round",
       "intPlayed": "33",
       "intWin": "19",
@@ -40,10 +40,10 @@
       "intGoalsAgainst": "31",
       "intGoalDifference": "35",
       "intPoints": "69",
-      "dateUpdated": "2026-04-24 23:01:35"
+      "dateUpdated": "2026-05-03 23:00:28"
     },
     {
-      "idStanding": "9417450",
+      "idStanding": "9473762",
       "intRank": "3",
       "idTeam": "133647",
       "strTeam": "Celtic",
@@ -51,7 +51,7 @@
       "idLeague": "4330",
       "strLeague": "Scottish Premier League",
       "strSeason": "2025-2026",
-      "strForm": "WWLWW",
+      "strForm": "WWWWL",
       "strDescription": "Championship round",
       "intPlayed": "33",
       "intWin": "21",
@@ -61,10 +61,10 @@
       "intGoalsAgainst": "35",
       "intGoalDifference": "24",
       "intPoints": "67",
-      "dateUpdated": "2026-04-24 23:01:35"
+      "dateUpdated": "2026-05-03 23:00:28"
     },
     {
-      "idStanding": "9417451",
+      "idStanding": "9473763",
       "intRank": "4",
       "idTeam": "133640",
       "strTeam": "Motherwell",
@@ -72,7 +72,7 @@
       "idLeague": "4330",
       "strLeague": "Scottish Premier League",
       "strSeason": "2025-2026",
-      "strForm": "LLDLL",
+      "strForm": "LWLLD",
       "strDescription": "Championship round",
       "intPlayed": "33",
       "intWin": "14",
@@ -82,10 +82,10 @@
       "intGoalsAgainst": "29",
       "intGoalDifference": "23",
       "intPoints": "54",
-      "dateUpdated": "2026-04-24 23:01:35"
+      "dateUpdated": "2026-05-03 23:00:28"
     },
     {
-      "idStanding": "9417452",
+      "idStanding": "9473764",
       "intRank": "5",
       "idTeam": "133646",
       "strTeam": "Hibernian",
@@ -93,7 +93,7 @@
       "idLeague": "4330",
       "strLeague": "Scottish Premier League",
       "strSeason": "2025-2026",
-      "strForm": "LWDDD",
+      "strForm": "LLLWD",
       "strDescription": "Championship round",
       "intPlayed": "33",
       "intWin": "13",
@@ -103,7 +103,7 @@
       "intGoalsAgainst": "37",
       "intGoalDifference": "14",
       "intPoints": "51",
-      "dateUpdated": "2026-04-24 23:01:35"
+      "dateUpdated": "2026-05-03 23:00:28"
     }
   ]
 }

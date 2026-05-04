@@ -599,9 +599,50 @@ elif page == " Championship Probability":
 
         if len(st_df)<2: st.warning("Need 2 teams.")
         else:
+            # For split leagues, separate playoff from playout
+            is_split_league = fmt and fmt["type"] in ("playoff_playout", "split", "belgian", "liga2_ro")
+            split_active = False
+            if is_split_league and sim_lg in ("Romanian Liga I", "Belgian Pro League", "Greek Super League", "Scottish Premiership"):
+                # Check if split is active by looking at raw data
+                for fp in glob.glob(os.path.join(DATA_DIR, "full_standings_2526_*.json")):
+                    try:
+                        with open(fp, encoding="utf-8") as _f:
+                            _d = json.load(_f)
+                        if LEAGUE_ID_TO_NAME.get(_d.get("league_id")) == sim_lg and _d.get("is_split_active"):
+                            split_active = True
+                            break
+                    except Exception:
+                        continue
+
+            if split_active:
+                sim_group = st.radio("Simulate Group", ["Championship Playoff", "Relegation Playout"], horizontal=True)
+                # Get group data from raw standings
+                raw_path = None
+                for fp in glob.glob(os.path.join(DATA_DIR, "full_standings_2526_*.json")):
+                    try:
+                        with open(fp, encoding="utf-8") as _f:
+                            _d = json.load(_f)
+                        if LEAGUE_ID_TO_NAME.get(_d.get("league_id")) == sim_lg:
+                            raw_path = _d["table"]
+                            break
+                    except Exception:
+                        continue
+
+                if raw_path:
+                    if sim_group == "Championship Playoff":
+                        group_key = {"Romanian Liga I": "Playoff", "Belgian Pro League": "Championship Playoff", "Greek Super League": "Championship", "Scottish Premiership": "Championship Group"}.get(sim_lg, "Playoff")
+                    else:
+                        group_key = {"Romanian Liga I": "Playout", "Belgian Pro League": "Relegation", "Greek Super League": "Relegation", "Scottish Premiership": "Relegation Group"}.get(sim_lg, "Playout")
+                    group_teams = [t for t in raw_path if t.get("strGroup", "").startswith(group_key.split()[0])]
+                    if group_teams:
+                        st_df = pd.DataFrame(group_teams)
+                        for c in ["intRank","intPlayed","intWin","intDraw","intLoss","intGoalsFor","intGoalsAgainst","intGoalDifference","intPoints"]:
+                            if c in st_df.columns: st_df[c] = pd.to_numeric(st_df[c], errors="coerce").fillna(0).astype(int)
+                        st.success(f"Simulating **{sim_group}** group only ({len(st_df)} teams)")
+
             n_sim = st.slider("Simulations", 1000, 50000, 10000, 1000)
-            rem = st.slider("Remaining Matches/Team", 0, 30, 10)
-            halve = st.checkbox("Halve points (playoff)", value=bool(fmt and fmt.get("halve_points"))) if fmt else False
+            rem = st.slider("Remaining Matches/Team", 0, 30, 4 if split_active else 10)
+            halve = False  # Points are already halved in split standings
 
             st_df["wr"] = st_df["intWin"]/st_df["intPlayed"].clip(lower=1)
             st_df["dr"] = st_df["intDraw"]/st_df["intPlayed"].clip(lower=1)

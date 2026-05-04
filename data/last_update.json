@@ -1,22 +1,12 @@
 {
-  "timestamp": "2026-04-25T11:22:21.127557",
-  "date": "2026-04-25 11:22",
+  "timestamp": "2026-05-04T17:07:40.804223",
+  "date": "2026-05-04 17:07",
   "leagues_updated": [
-    {
-      "league_id": 4336,
-      "league": "Greek Super League",
-      "changes": 0
-    },
     {
       "league_id": 4691,
       "league": "Romanian Liga I",
-      "changes": 0
-    },
-    {
-      "league_id": 4338,
-      "league": "Belgian Pro League",
-      "changes": 0
+      "changes": 12
     }
   ],
-  "total_changes": 0
+  "total_changes": 12
 }

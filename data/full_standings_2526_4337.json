@@ -238,5 +238,6 @@
   "league_id": 4337,
   "league_name": "Eredivisie",
   "no_resort": true,
-  "updated_at": "2026-04-25T10:54:38.751238"
+  "is_split_active": false,
+  "updated_at": "2026-05-04T17:02:49.577141"
 }
