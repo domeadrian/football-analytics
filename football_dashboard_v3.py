@@ -356,6 +356,16 @@ ideal_comp = {"GK":(2,3),"DEF":(6,9),"MID":(6,9),"ATT":(4,7)}
 # 
 if page == " Overview & Standings":
     st.title(" Football Analytics Pro  2025-2026")
+    with st.expander("How to use this page", expanded=False):
+        st.markdown("""
+**Overview & Standings** shows the current league tables for all selected leagues.
+
+- Use the **Leagues** filter in the sidebar to select which leagues to display
+- Tables are split into playoff/playout zones where applicable (Romania, Belgium, Scotland, etc.)
+- **Recent Form** shows each team's last 5 results (W=Win, D=Draw, L=Loss)
+- **Points Distribution** at the bottom compares the top teams across all selected leagues
+- Use the slider to control how many teams per league appear in the comparison chart
+""")
     c1,c2,c3,c4,c5 = st.columns(5)
     c1.metric("Leagues", len(selected_leagues))
     c2.metric("Teams", len(f_standings["strTeam"].unique()) if not f_standings.empty else 0)
@@ -447,10 +457,11 @@ if page == " Overview & Standings":
         if len(f_standings["league"].unique()) > 1:
             st.subheader("Points Distribution  All Leagues")
             top_n = st.slider("Top N per league", 3, 10, 5)
-            top_teams = f_standings.groupby("league",group_keys=False).apply(lambda g: g.nlargest(top_n,"intPoints")).reset_index(drop=True)
-            fig = px.bar(top_teams.sort_values(["league","intPoints"]), x="intPoints", y="strTeam", color="league", orientation="h", text="intPoints", height=max(400,len(top_teams)*25))
-            fig.update_traces(textposition="outside"); fig.update_layout(template="plotly_white", yaxis={"categoryorder":"total ascending"})
-            st.plotly_chart(fig, use_container_width=True)
+            top_teams = pd.concat([g.nlargest(min(top_n, len(g)), "intPoints") for _, g in f_standings.groupby("league")], ignore_index=True)
+            if not top_teams.empty:
+                fig = px.bar(top_teams.sort_values(["league","intPoints"]), x="intPoints", y="strTeam", color="league", orientation="h", text="intPoints", height=max(400,len(top_teams)*25))
+                fig.update_traces(textposition="outside"); fig.update_layout(template="plotly_white", yaxis={"categoryorder":"total ascending"})
+                st.plotly_chart(fig, use_container_width=True)
 
 
 # 
@@ -458,6 +469,17 @@ if page == " Overview & Standings":
 # 
 elif page == " Match Analysis":
     st.title(" Match Analysis")
+    with st.expander("How to use this page", expanded=False):
+        st.markdown("""
+**Match Analysis** lets you explore match results and head-to-head statistics.
+
+- **Date Range**: Filter matches by date using the date picker
+- **Head-to-Head**: Select two teams to compare their history
+- **Outcome Distribution**: See the proportion of home wins, draws, and away wins
+- **Goal Timing**: Discover when goals tend to be scored
+- **Home Advantage**: Compare home vs away performance across teams
+- **Records**: Find the biggest wins and highest-scoring matches
+""")
     if f_events.empty:
         st.warning("No match events.")
     else:
@@ -554,6 +576,18 @@ elif page == " Match Analysis":
 # 
 elif page == " Championship Probability":
     st.title(" Championship Probability  Monte Carlo")
+    with st.expander("How to use this page", expanded=False):
+        st.markdown("""
+**Championship Probability** simulates the rest of the season 10,000+ times.
+
+- Select a **league** to simulate
+- The model uses each team's current win/draw/loss rates
+- It simulates all remaining matches and counts how often each team finishes in each position
+- **Title %**: probability of winning the league
+- **Top N %**: probability of finishing in playoff/Champions League spots
+- **Relegation %**: probability of finishing in the relegation zone
+- Results change as more real matches are played during the season
+""")
     if f_standings.empty:
         st.warning("No standings data.")
     else:
@@ -622,6 +656,16 @@ elif page == " Championship Probability":
 # 
 elif page == " European Comparison":
     st.title(" European League Comparison")
+    with st.expander("How to use this page", expanded=False):
+        st.markdown("""
+**European Comparison** benchmarks all 15 leagues against each other.
+
+- **Competitiveness**: How close is the points spread? A tighter spread = more competitive league
+- **Scoring Trends**: Average goals per match across leagues
+- **League Coefficient**: A UEFA-style strength rating based on team performance
+- **Squad Valuations**: Total estimated market value per league
+- **Radar Charts**: Visual comparison of multiple league metrics at once
+""")
     if all_standings.empty: st.warning("No data.")
     else:
         lm = []
@@ -677,6 +721,17 @@ elif page == " European Comparison":
 # 
 elif page == " Player Analysis":
     st.title(" Player Analysis")
+    with st.expander("How to use this page", expanded=False):
+        st.markdown("""
+**Player Analysis** explores the full player database.
+
+- Use the **Search Player** box in the sidebar to find specific players
+- **Position Distribution**: See how many goalkeepers, defenders, midfielders, and forwards exist
+- **Nationality**: Discover which countries produce the most players in these leagues
+- **Age Distribution**: Histogram of player ages across the dataset
+- **Player Comparison**: Select two players side-by-side to compare attributes
+- **Team Scatter**: See each team's attacking vs defensive player balance
+""")
     if f_players.empty:
         st.warning("No player data. Run fetch_teams_players.py to download.")
     else:
@@ -747,6 +802,18 @@ elif page == " Player Analysis":
 # 
 elif page == " Scouting Intelligence":
     st.title(" Scouting Intelligence Platform")
+    with st.expander("How to use this page", expanded=False):
+        st.markdown("""
+**Scouting Intelligence** is the talent identification hub.
+
+- **Wonderkid Radar**: Finds the best U21 players ranked by a potential score (age + value)
+- **Smart Scout**: Build custom filters -- set age range, position, league, and value to find targets
+- **Similar Players**: Enter a player and the system finds players with a similar profile
+- **Best XI Generator**: Pick a formation and the system builds the optimal team from all available players
+- **Value Trends**: See how market values are distributed by position across all leagues
+
+Tip: Use Smart Scout to narrow down transfer targets for specific positions and budget ranges.
+""")
     if _ap.empty:
         st.warning("No player data available.")
     else:
@@ -874,6 +941,18 @@ elif page == " Scouting Intelligence":
 # 
 elif page == " Tactical Analysis":
     st.title(" Tactical Analysis Board")
+    with st.expander("How to use this page", expanded=False):
+        st.markdown("""
+**Tactical Analysis** provides insights into how teams play.
+
+- **Home/Away Split**: Compare points-per-game at home vs away for each team
+- **Scoring Patterns**: See goals scored across different matchdays/rounds
+- **xG Analysis**: Expected goals calculated using a Poisson model -- shows if teams are over/underperforming
+- **Formation Estimator**: Estimates likely formations from squad composition (GK/DEF/MID/ATT ratios)
+- **Momentum Tracker**: Cumulative points chart showing each team's form trajectory over the season
+
+Tip: Teams with high xG but low actual goals are "unlucky" -- they may improve. The opposite means regression is likely.
+""")
     if f_standings.empty: st.warning("No data.")
     else:
         tac_tabs = st.tabs([" Home/Away Split"," Scoring Patterns"," xG Analysis"," Formation Estimator"," Momentum Tracker"])
@@ -1003,6 +1082,19 @@ elif page == " Tactical Analysis":
 # 
 elif page == " Opponent Report":
     st.title(" Pre-Match Opponent Report")
+    with st.expander("How to use this page", expanded=False):
+        st.markdown("""
+**Opponent Report** generates pre-match intelligence.
+
+1. Select the **league**, then pick **Your Team** and the **Opponent**
+2. The system generates:
+   - A **radar chart** comparing both teams' strengths (attack, defense, form, etc.)
+   - **Identified weaknesses** of the opponent you can exploit
+   - A **match prediction** with win/draw/loss probabilities
+   - **Squad comparison** metrics (average age, depth, value)
+
+Tip: Use this before every match to prepare a tactical briefing.
+""")
     if f_standings.empty or f_events.empty: st.warning("No data.")
     else:
         opp_lg = st.selectbox("League", sorted(f_standings["league"].unique()), key="opp_lg")
@@ -1099,6 +1191,17 @@ elif page == " Opponent Report":
 # 
 elif page == " Transfer Recommendations":
     st.title(" Transfer Recommendation Engine")
+    with st.expander("How to use this page", expanded=False):
+        st.markdown("""
+**Transfer Recommendations** helps plan your transfer window.
+
+- **Squad Audit**: See your current squad composition, average age, and total value
+- **Transfer Needs**: The system identifies weak positions and suggests targets from other leagues
+- **Players to Sell**: Flags aging or surplus players that could be sold to free budget
+- **Cross-League Scout**: Finds the best value-for-money players across all 15 leagues for each position
+
+Tip: Compare Transfer Needs with Cross-League Scout to find affordable solutions for your weak spots.
+""")
     if f_standings.empty: st.warning("No data.")
     else:
         tr_tabs = st.tabs([" Squad Audit"," Transfer Needs"," Players to Sell"," Cross-League Scout"])
@@ -1214,6 +1317,17 @@ elif page == " Transfer Recommendations":
 # 
 elif page == " Physical & Medical":
     st.title(" Physical & Medical Dashboard")
+    with st.expander("How to use this page", expanded=False):
+        st.markdown("""
+**Physical & Medical** monitors fitness risk and workload.
+
+- **Squad Fitness Profile**: Maps players by age vs position to estimate physical risk zones
+- **Injury Risk Assessment**: Scores each squad position based on age, depth, and workload factors
+- **Fixture Congestion**: Analyzes spacing between matches -- flags periods where fatigue risk is highest
+- **Rotation Planner**: Recommends positions that need more squad depth for safe rotation
+
+Tip: Check Fixture Congestion before busy periods (cup + league matches) to plan rotation ahead.
+""")
     if _ap.empty: st.warning("No player data.")
     else:
         pm_tabs = st.tabs([" Squad Fitness Profile"," Injury Risk Assessment"," Fixture Congestion"," Rotation Planner"])
@@ -1315,6 +1429,17 @@ elif page == " Physical & Medical":
 # 
 elif page == " Youth Academy":
     st.title(" Youth Academy & Development Pipeline")
+    with st.expander("How to use this page", expanded=False):
+        st.markdown("""
+**Youth Academy** tracks young talent development.
+
+- **U21 Tracker**: Lists all players under 21 by club -- see which teams invest in youth
+- **Development Potential**: Scores young players on a growth ceiling metric (younger + higher value = more potential)
+- **Academy Comparison**: Compares youth squad strength across all clubs
+- **Youth Nationality Map**: Shows where young talent originates geographically
+
+Tip: Use Development Potential to identify which youngsters deserve first-team opportunities.
+""")
     if _ap.empty: st.warning("No player data.")
     else:
         ya_tabs = st.tabs([" U21 Tracker"," Development Potential"," Academy Comparison"," Youth Nationality Map"])
@@ -1380,6 +1505,17 @@ elif page == " Youth Academy":
 # 
 elif page == " Financial Analysis":
     st.title(" Financial Analysis & FFP Monitor")
+    with st.expander("How to use this page", expanded=False):
+        st.markdown("""
+**Financial Analysis** covers squad economics and fair play compliance.
+
+- **Squad Valuation**: Total estimated market value for each club
+- **Wage Analysis**: How value is distributed across positions (GK, DEF, MID, ATT)
+- **Transfer ROI**: Points earned per million in squad value -- measures efficiency
+- **FFP Compliance**: Flags clubs with risky value concentration (too much investment in one area)
+
+Tip: Clubs with high Transfer ROI are getting more from less -- study their approach.
+""")
     if _ap.empty and f_standings.empty: st.warning("No data.")
     else:
         fin_tabs = st.tabs([" Squad Valuation"," Wage Analysis"," Transfer ROI"," FFP Compliance"])
@@ -1473,6 +1609,17 @@ elif page == " Financial Analysis":
 # 
 elif page == " Season Projections":
     st.title(" Season Projections & ELO Ratings")
+    with st.expander("How to use this page", expanded=False):
+        st.markdown("""
+**Season Projections** predicts how the season will end.
+
+- **ELO Ratings**: A chess-style rating system applied to football -- higher = stronger team
+- **Final Table Projection**: Extrapolates current points-per-game to predict the final standings
+- **Points Trajectory**: Plots cumulative points throughout the season for all teams
+- **Race Tracker**: Monitors the title race and relegation battle with projected thresholds
+
+Tip: ELO ratings update after every match -- teams on winning streaks climb quickly.
+""")
     if f_standings.empty: st.warning("No data.")
     else:
         proj_tabs = st.tabs([" ELO Ratings"," Final Table Projection"," Points Trajectory"," Race Tracker"])
@@ -1573,6 +1720,17 @@ elif page == " Season Projections":
 # 
 elif page == " ML Prediction Models":
     st.title(" Machine Learning Models")
+    with st.expander("How to use this page", expanded=False):
+        st.markdown("""
+**ML Prediction Models** uses machine learning algorithms on real match data.
+
+- **Team Clustering (K-Means)**: Groups teams into performance tiers (elite, strong, mid-table, weak)
+- **Points Predictor (Linear Regression)**: Predicts final points from current stats -- shows over/underperformers
+- **Match Predictor (Poisson)**: Calculates exact probabilities for any match outcome
+- **Random Forest Classifier**: Identifies which stats matter most for winning matches
+
+Tip: If a team's predicted points are higher than actual, they may be due for a strong finish.
+""")
     if f_standings.empty: st.warning("No data.")
     else:
         ml_tabs = st.tabs([" Team Clustering"," Points Predictor"," Match Predictor"," Random Forest Classifier"])
@@ -1669,6 +1827,17 @@ elif page == " ML Prediction Models":
 # 
 elif page == " Advanced Statistics":
     st.title(" Advanced Statistics")
+    with st.expander("How to use this page", expanded=False):
+        st.markdown("""
+**Advanced Statistics** applies statistical models to the data.
+
+- **Poisson Model**: Calculates goal probability distributions for each team (chance of scoring 0, 1, 2, 3+ goals)
+- **Expected Points (xPts)**: Compares actual points earned to what was statistically expected based on match difficulty
+- **Form Analysis**: Compares recent form (last 5 matches) vs season average
+- **Consistency Index**: Measures result variability -- low index = consistent team, high index = unpredictable
+
+Tip: Teams with actual points above xPts may be "lucky" and due for regression. Below xPts = unlucky.
+""")
     if f_standings.empty: st.warning("No data.")
     else:
         adv_tabs = st.tabs([" Poisson Model"," Expected Points"," Form Analysis"," Consistency Index"])
@@ -1757,6 +1926,17 @@ elif page == " Advanced Statistics":
 # 
 elif page == " League Management":
     st.title(" League Management Tools")
+    with st.expander("How to use this page", expanded=False):
+        st.markdown("""
+**League Management** provides administrative and scheduling insights.
+
+- **Referee Stats**: Average goals per match by referee -- some referees oversee more open games
+- **Venue Analysis**: Identifies which stadiums produce the most goals
+- **Fixture Schedule**: Calendar view of matches by month + upcoming fixture list
+- **Attendance Tracker**: Estimated average home attendance for each club
+
+Tip: Use Fixture Schedule to plan scouting trips or identify fixture congestion periods.
+""")
     if f_standings.empty and f_events.empty: st.warning("No data.")
     else:
         lm_tabs = st.tabs([" Referee Stats"," Venue Analysis"," Fixture Schedule"," Attendance Tracker"])
@@ -1837,6 +2017,16 @@ elif page == " League Management":
 # 
 elif page == " Video Analysis Hub":
     st.title(" Video Analysis Hub")
+    with st.expander("How to use this page", expanded=False):
+        st.markdown("""
+**Video Analysis Hub** links match footage with statistical context.
+
+- **Match Highlights**: Browse available video links for completed matches
+- **Key Moments**: Identifies the closest, most dramatic matches with key stats
+- **Set Piece Analysis**: Flags teams scoring below the league average as candidates for set piece improvement
+
+Tip: Combine Key Moments data with video to study decisive phases of important matches.
+""")
     st.caption("Match highlights and video content linked from available data sources")
     if f_events.empty: st.warning("No events data.")
     else:
@@ -1909,6 +2099,15 @@ elif page == " Video Analysis Hub":
 # 
 elif page == " Data Sources":
     st.title(" Data Sources & Methods")
+    with st.expander("How to use this page", expanded=False):
+        st.markdown("""
+**Data Sources** documents where the data comes from and what is covered.
+
+- View the **data providers** and their licenses
+- See which **leagues** are included and how many teams each has
+- Review all **platform modules** with their purpose and methodology
+- Check **academic references** for the statistical models used
+""")
     st.subheader("Data Sources")
     st.markdown("""
 | Source | Data | Season | License |
@@ -1956,6 +2155,14 @@ elif page == " Data Sources":
 # PAGE: Documentation / Documentatie
 # =====================================================
 elif page == " Documentation":
+    with st.expander("How to use this page", expanded=False):
+        st.markdown("""
+**Documentation** provides a full guide to the platform in English and Romanian.
+
+- Toggle between **English** and **Romana** at the top
+- Each section explains what the page does and how to interpret the data
+- Use this as a reference when you are unsure about a feature
+""")
     lang = st.radio("Language / Limba", ["English", "Romana"], horizontal=True)
 
     if lang == "English":
