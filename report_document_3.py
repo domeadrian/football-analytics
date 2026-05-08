@@ -17,7 +17,7 @@ from report_charts_4 import SHORT_NAMES, POS_GROUPS, IDEAL_SQUAD, _get_ro_player
 
 def _add_table(doc, headers, rows, col_widths=None):
     """Add a formatted table to the doc."""
-    table = doc.add_table(rows=1 + len(rows), cols=len(headers), style="Light Grid Accent 1")
+    table = doc.add_table(rows=1 + len(rows), cols=len(headers), style="Light Shading Accent 1")
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     for i, h in enumerate(headers):
         cell = table.rows[0].cells[i]

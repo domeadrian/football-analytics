@@ -104,8 +104,11 @@ def build_document_part1(doc, data):
         "29. Season Narrative & Predictions",
     ]
     for item in toc_items:
-        p = doc.add_paragraph(item)
-        p.paragraph_format.space_after = Pt(2)
+        if item.startswith("---") or item == "":
+            doc.add_paragraph(item)
+        else:
+            p = doc.add_paragraph(item, style="List Number")
+            p.paragraph_format.space_after = Pt(2)
 
     doc.add_page_break()
 
