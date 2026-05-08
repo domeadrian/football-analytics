@@ -325,15 +325,33 @@ def generate_charts_part1(data):
         charts_generated.append("04_competitiveness")
 
         # Chart 4.3: League Strength vs Market Value bubble
+        # Use short league labels to avoid overlap
+        _LEAGUE_SHORT = {
+            "English Premier League": "EPL", "Spanish La Liga": "La Liga",
+            "German Bundesliga": "Bundesliga", "Italian Serie A": "Serie A",
+            "French Ligue 1": "Ligue 1", "Dutch Eredivisie": "Eredivisie",
+            "Portuguese Primeira Liga": "Primeira", "Turkish Super Lig": "Super Lig",
+            "Belgian Pro League": "Belgian PL", "Romanian Liga I": "Liga I"
+        }
+        ls_plot = ls_df.copy()
+        ls_plot["Short"] = ls_plot["League"].map(_LEAGUE_SHORT).fillna(ls_plot["League"])
         fig = px.scatter(
-            ls_df, x="Strength", y="Market (M€)", size="Total Goals",
-            color="League", text="League",
+            ls_plot, x="Strength", y="Market (M€)", size="Total Goals",
+            color="League", text="Short",
             title="League Strength vs Market Value (bubble = total goals)",
             size_max=50
         )
-        fig.update_traces(textposition="top center", textfont_size=8)
-        fig.update_layout(template="plotly_white", height=500, showlegend=False)
-        fig.write_image(f"{IMG_DIR}/04_strength_market.png", width=900, height=550, scale=2)
+        positions = ["top right", "bottom left", "top left", "bottom right",
+                     "top center", "bottom center", "middle right", "middle left"]
+        for trace in fig.data:
+            if hasattr(trace, 'textposition') and trace.text is not None:
+                n = len(trace.x) if hasattr(trace.x, '__len__') else 1
+                trace.textposition = [positions[j % len(positions)] for j in range(n)]
+        fig.update_traces(textfont_size=10)
+        fig.update_layout(template="plotly_white", height=600, showlegend=False,
+                          xaxis=dict(range=[ls_plot['Strength'].min()-0.5, ls_plot['Strength'].max()+0.5]),
+                          yaxis=dict(range=[-50, ls_plot['Market (M€)'].max()*1.1]))
+        fig.write_image(f"{IMG_DIR}/04_strength_market.png", width=1100, height=600, scale=2)
         charts_generated.append("04_strength_market")
 
     # ================================================================
@@ -395,20 +413,36 @@ def generate_charts_part1(data):
         # Chart 6.1: Wonderkid Radar - Best U21 players
         u21 = players[(players["age"] <= 21) & (players["age"] > 16)].copy()
         if not u21.empty and "strPosition" in u21.columns:
-            # Score based on age (younger = higher potential)
-            u21["potential_score"] = (22 - u21["age"]) * 10  # Simple potential metric
-            top_wonderkids = u21.nlargest(min(20, len(u21)), "potential_score")
+            # Score: combine age potential + market value if available
+            u21["potential_score"] = (22 - u21["age"]) * 10
+            if "market_value_eur_m" in u21.columns:
+                mv = pd.to_numeric(u21["market_value_eur_m"], errors="coerce").fillna(0)
+                u21["potential_score"] = u21["potential_score"] + mv * 5
+            top_wonderkids = u21.nlargest(min(15, len(u21)), "potential_score")
 
             if not top_wonderkids.empty:
+                # Shorten player names: first initial + last name
+                def _short_player(name):
+                    parts = str(name).split()
+                    if len(parts) >= 2:
+                        return parts[0][0] + ". " + parts[-1]
+                    return str(name)
+                top_wonderkids["short_player"] = top_wonderkids["strPlayer"].apply(_short_player)
                 fig = px.scatter(
                     top_wonderkids, x="age", y="potential_score",
-                    color="strPosition", text="strPlayer" if "strPlayer" in top_wonderkids.columns else None,
+                    color="strPosition", text="short_player",
                     title="Wonderkid Radar - Top U21 Prospects (Higher = More Potential)",
                     size="potential_score", size_max=20
                 )
-                fig.update_traces(textposition="top center", textfont_size=7)
-                fig.update_layout(template="plotly_white", height=500)
-                fig.write_image(f"{IMG_DIR}/06_wonderkids.png", width=900, height=500, scale=2)
+                positions = ["top right", "bottom left", "top left", "bottom right",
+                             "top center", "bottom center", "middle right", "middle left"]
+                for trace in fig.data:
+                    if hasattr(trace, 'textposition') and trace.text is not None:
+                        n = len(trace.x) if hasattr(trace.x, '__len__') else 1
+                        trace.textposition = [positions[j % len(positions)] for j in range(n)]
+                fig.update_traces(textfont_size=9)
+                fig.update_layout(template="plotly_white", height=600)
+                fig.write_image(f"{IMG_DIR}/06_wonderkids.png", width=1100, height=600, scale=2)
                 charts_generated.append("06_wonderkids")
 
         # Chart 6.2: Age vs Position Heatmap

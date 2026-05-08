@@ -36,25 +36,46 @@ def generate_charts_part2(data):
 
     if not ro_standings.empty:
         # Chart 7.1: Attack vs Defense Quadrant
+        # Use short team names to avoid label overlap
+        _SHORT_NAMES = {
+            "Universitatea Craiova": "U. Craiova", "Universitatea Cluj": "U. Cluj",
+            "CFR Cluj": "CFR", "Dinamo Bucure\u0219ti": "Dinamo",
+            "Rapid Bucure\u0219ti": "Rapid", "Arge\u0219 Pite\u0219ti": "Arge\u0219",
+            "FCSB": "FCSB", "UTA Arad": "UTA", "Boto\u0219ani": "Boto\u0219ani",
+            "Cs\u00edkszereda Miercurea Ciuc": "Cs\u00edkszereda",
+            "O\u021belul Gala\u021bi": "O\u021belul", "Farul Constan\u021ba": "Farul",
+            "Petrolul Ploie\u0219ti": "Petrolul", "Unirea Slobozia": "Unirea",
+            "Hermannstadt": "Hermannstadt", "Metaloglobus Bucure\u0219ti": "Metaloglobus"
+        }
+        ro_plot = ro_standings.copy()
+        ro_plot["short_name"] = ro_plot["strTeam"].map(_SHORT_NAMES).fillna(ro_plot["strTeam"])
         fig = px.scatter(
-            ro_standings, x="intGoalsFor", y="intGoalsAgainst",
-            text="strTeam", size="intPoints", color="intPoints",
+            ro_plot, x="intGoalsFor", y="intGoalsAgainst",
+            text="short_name", size="intPoints", color="intPoints",
             color_continuous_scale="RdYlGn",
             title="Attack vs Defense Quadrant Analysis",
             labels={"intGoalsFor": "Goals Scored", "intGoalsAgainst": "Goals Conceded"}
         )
-        fig.update_traces(textposition="top center", textfont_size=8)
-        fig.update_layout(template="plotly_white", height=550)
+        # Spread labels with alternating positions to avoid overlap
+        positions = ["top center", "bottom center", "top right", "bottom left",
+                     "top left", "bottom right", "middle right", "middle left"]
+        for i, trace in enumerate(fig.data):
+            if hasattr(trace, 'textposition'):
+                trace.textposition = [positions[j % len(positions)] for j in range(len(trace.x))]
+        fig.update_traces(textfont_size=9)
+        fig.update_layout(template="plotly_white", height=650,
+                          xaxis=dict(range=[ro_plot['intGoalsFor'].min()-4, ro_plot['intGoalsFor'].max()+4]),
+                          yaxis=dict(range=[ro_plot['intGoalsAgainst'].min()-4, ro_plot['intGoalsAgainst'].max()+8]))
         avg_gf = ro_standings["intGoalsFor"].mean()
         avg_ga = ro_standings["intGoalsAgainst"].mean()
         fig.add_hline(y=avg_ga, line_dash="dash", line_color="gray", annotation_text="Avg GA")
         fig.add_vline(x=avg_gf, line_dash="dash", line_color="gray", annotation_text="Avg GF")
         # Add quadrant labels
-        fig.add_annotation(x=ro_standings["intGoalsFor"].max(), y=ro_standings["intGoalsAgainst"].min(),
-                           text="ELITE (High Attack, Low Defense)", showarrow=False, font=dict(size=9, color="green"))
-        fig.add_annotation(x=ro_standings["intGoalsFor"].min(), y=ro_standings["intGoalsAgainst"].max(),
-                           text="STRUGGLING (Low Attack, High Defense)", showarrow=False, font=dict(size=9, color="red"))
-        fig.write_image(f"{IMG_DIR}/07_attack_defense_quad.png", width=900, height=550, scale=2)
+        fig.add_annotation(x=ro_plot["intGoalsFor"].max(), y=ro_plot["intGoalsAgainst"].min(),
+                           text="ELITE", showarrow=False, font=dict(size=10, color="green"))
+        fig.add_annotation(x=ro_plot["intGoalsFor"].min(), y=ro_plot["intGoalsAgainst"].max(),
+                           text="STRUGGLING", showarrow=False, font=dict(size=10, color="red"))
+        fig.write_image(f"{IMG_DIR}/07_attack_defense_quad.png", width=1100, height=650, scale=2)
         charts_generated.append("07_attack_defense_quad")
 
         # Chart 7.2: Win/Draw/Loss Stacked Bar
@@ -75,17 +96,24 @@ def generate_charts_part2(data):
         # Chart 7.3: Points Per Game Efficiency with Trendline
         ro_standings["ppg"] = (ro_standings["intPoints"] / ro_standings["intPlayed"].replace(0, 1)).round(2)
         ro_standings["gd_per_game"] = (ro_standings["intGoalDifference"] / ro_standings["intPlayed"].replace(0, 1)).round(2)
+        eff_plot = ro_standings.copy()
+        eff_plot["short_name"] = eff_plot["strTeam"].map(_SHORT_NAMES).fillna(eff_plot["strTeam"])
         fig = px.scatter(
-            ro_standings, x="ppg", y="gd_per_game", text="strTeam",
+            eff_plot, x="ppg", y="gd_per_game", text="short_name",
             size="intPlayed", color="intPoints",
             color_continuous_scale="Viridis",
             title="Efficiency Matrix: Points Per Game vs Goal Difference Per Game",
             labels={"ppg": "Points Per Game", "gd_per_game": "GD Per Game"},
             trendline="ols"
         )
-        fig.update_traces(textposition="top center", textfont_size=8)
-        fig.update_layout(template="plotly_white", height=500)
-        fig.write_image(f"{IMG_DIR}/07_efficiency_matrix.png", width=900, height=500, scale=2)
+        positions = ["top right", "bottom left", "top left", "bottom right",
+                     "top center", "bottom center", "middle right", "middle left"]
+        for trace in fig.data:
+            if hasattr(trace, 'textposition') and trace.text is not None:
+                trace.textposition = [positions[j % len(positions)] for j in range(len(trace.x))]
+        fig.update_traces(textfont_size=9)
+        fig.update_layout(template="plotly_white", height=600)
+        fig.write_image(f"{IMG_DIR}/07_efficiency_matrix.png", width=1100, height=600, scale=2)
         charts_generated.append("07_efficiency_matrix")
 
     # ================================================================

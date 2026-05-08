@@ -94,6 +94,14 @@ def build_document_part1(doc, data):
         "21. Dashboard Platform & Technical Stack",
         "22. Conclusions & Impact",
         "23. Technical Appendix & References",
+        "",
+        "--- Romanian Liga I Deep Dive ---",
+        "24. Squad Analysis Deep Dive",
+        "25. Player Scouting - Best Players & Hidden Gems",
+        "26. Club-by-Club Diagnostics",
+        "27. Transfer Strategy & Recommendations",
+        "28. Match Event Analysis & Key Moments",
+        "29. Season Narrative & Predictions",
     ]
     for item in toc_items:
         p = doc.add_paragraph(item)
