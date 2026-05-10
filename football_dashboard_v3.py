@@ -394,6 +394,7 @@ if page == " Overview & Standings":
                         po_d = _make_table(po_df); zones = []
                         for _,r in po_df.iterrows():
                             zones.append(" Auto-Promotion" if r["intRank"]<=2 else " Promotion Playoff" if r["intRank"]<=4 else "")
+                        st.caption("[Table] League Standings: Each league table is rendered as a Streamlit dataframe with full container width and hidden index. The table uses the standard columns: Pos, Team, P, W, D, L, GF, GA, GD, Pts. For leagues with special formats, an additional 'Zone' column is appended, showing colored zone indicators such as 'Auto-Promotion', 'Promotion Playoff', 'Relegated', 'Prom./Rel. Playoff', etc. This zone column uses emoji indicators to make the status immediately visually recognizable.")
                         po_d["Zone"] = zones; st.dataframe(po_d, use_container_width=True, hide_index=True)
                     if not rest_df.empty:
                         half = (len(rest_df)+1)//2
@@ -461,6 +462,7 @@ if page == " Overview & Standings":
             if not top_teams.empty:
                 fig = px.bar(top_teams.sort_values(["league","intPoints"]), x="intPoints", y="strTeam", color="league", orientation="h", text="intPoints", height=max(400,len(top_teams)*25))
                 fig.update_traces(textposition="outside"); fig.update_layout(template="plotly_white", yaxis={"categoryorder":"total ascending"})
+                st.caption("[Figure] Points Distribution — All Leagues: This is a horizontal bar chart created with Plotly Express (px.bar). For each selected league, the top N teams (controlled by a slider, default 5, range 3-10) are extracted based on total points. All these teams are then combined into a single chart where each bar represents a team's total points, color-coded by league. The bars are sorted so the team with the most points across all leagues appears at the top. Each bar has the exact points value displayed as text outside the bar. The chart uses the 'plotly_white' template for a clean appearance. The height dynamically adjusts based on the number of teams (minimum 400px, 25px per team). This visualization answers the question: 'Which teams across Europe have accumulated the most points so far this season?' It enables direct cross-league comparison of team performance, though users should note that different leagues have different numbers of rounds played, which affects the raw points totals.")
                 st.plotly_chart(fig, use_container_width=True)
 
 
@@ -518,6 +520,7 @@ elif page == " Match Analysis":
                     mc1.metric(f"{h2h_t1} Wins", t1w); mc2.metric("Draws", draws); mc3.metric(f"{h2h_t2} Wins", t2w)
                     h2h_disp = h2h[["dateEvent","strHomeTeam","intHomeScore","intAwayScore","strAwayTeam"]].copy()
                     h2h_disp.columns = ["Date","Home","HG","AG","Away"]
+                    st.caption("[Table] Head-to-Head Match History: A dataframe showing all matches between the two selected teams, sorted by date (most recent first). Columns are: Date, Home (home team name), HG (home goals), AG (away goals), Away (away team name). This allows the user to see the exact scorelines and dates of each meeting.")
                     st.dataframe(h2h_disp.sort_values("Date",ascending=False), use_container_width=True, hide_index=True)
 
             st.markdown("---")
@@ -527,6 +530,7 @@ elif page == " Match Analysis":
             if "intRound" in completed.columns: mc.append("intRound")
             md = completed[mc].copy()
             md.rename(columns={"dateEvent":"Date","strHomeTeam":"Home","intHomeScore":"HG","intAwayScore":"AG","strAwayTeam":"Away","league":"League","intRound":"Rd"}, inplace=True)
+            st.caption("[Table] All Completed Matches: A scrollable dataframe containing all completed matches (those where both home and away scores are available). Columns include: Date, Home, HG (home goals), AG (away goals), Away, League, and Rd (round number, if available). The table is sorted by date in descending order (most recent first). This serves as a master reference for all match results in the current filter scope.")
             st.dataframe(md.sort_values("Date",ascending=False), use_container_width=True, hide_index=True)
 
             c1,c2 = st.columns(2)
@@ -534,11 +538,13 @@ elif page == " Match Analysis":
                 rc = completed["result"].value_counts().reset_index(); rc.columns = ["Result","Count"]
                 fig = px.pie(rc, names="Result", values="Count", title="Outcome Distribution", color="Result",
                     color_discrete_map={"Home Win":"#2ca02c","Away Win":"#d62728","Draw":"#ff7f0e"}, hole=0.4)
+                st.caption("[Figure] Outcome Distribution: A donut-style pie chart (hole=0.4) showing the proportion of Home Wins (green, #2ca02c), Away Wins (red, #d62728), and Draws (orange, #ff7f0e) across all completed matches. This reveals the overall home advantage in the selected leagues. In most European leagues, home wins typically account for 40-50% of results, draws 20-30%, and away wins 20-35%. Deviations from this pattern may indicate unusual league characteristics or COVID-era effects on home advantage. The chart uses the 'plotly_white' template and has a height of 350px.")
                 fig.update_layout(template="plotly_white", height=350); st.plotly_chart(fig, use_container_width=True)
             with c2:
                 fig = px.histogram(completed, x="total_goals", nbins=10, title="Goals per Match", color_discrete_sequence=["#1f77b4"])
                 avg = completed["total_goals"].mean()
                 fig.add_vline(x=avg, line_dash="dash", line_color="red", annotation_text=f"Avg: {avg:.2f}")
+                st.caption("[Figure] Goals per Match: A histogram showing the distribution of total goals per match (home goals + away goals) across all completed fixtures. The x-axis shows the number of goals (0, 1, 2, 3, etc.) and the y-axis shows the frequency (number of matches). A vertical dashed red line marks the average goals per match with an annotation (e.g., 'Avg: 2.74'). This distribution typically follows a Poisson-like shape, with 2-3 goals being the most common outcome. The chart uses blue bars (#1f77b4) and the 'plotly_white' template at 350px height.")
                 fig.update_layout(template="plotly_white", height=350); st.plotly_chart(fig, use_container_width=True)
 
             # Goal timing analysis
@@ -555,6 +561,7 @@ elif page == " Match Analysis":
                     ha_data.append({"League":lg,"Home Win %":round(hw,1),"Draw %":round((lgdf["result"]=="Draw").mean()*100,1),"Away Win %":round((lgdf["result"]=="Away Win").mean()*100,1)})
                 ha_df = pd.DataFrame(ha_data).sort_values("Home Win %",ascending=True)
                 fig = px.bar(ha_df, x=["Home Win %","Draw %","Away Win %"], y="League", orientation="h", title="Home Advantage Comparison", barmode="stack", color_discrete_sequence=["#2ca02c","#ff7f0e","#d62728"])
+                st.caption("[Figure] Home Advantage Comparison: A 100%-style stacked horizontal bar chart comparing Home Win %, Draw %, and Away Win % for each league. Each league gets a horizontal bar divided into three colored segments: green for Home Win %, orange for Draw %, and red for Away Win %. Leagues are sorted by Home Win % in ascending order, so the league with the strongest home advantage appears at the bottom. This visualization answers: 'In which league does playing at home matter most?' Leagues like the Turkish Super Lig and Romanian Liga I historically show stronger home advantage due to passionate home crowds, while leagues like the Eredivisie tend to have more balanced results. The chart uses the 'plotly_white' template at 400px height.")
                 fig.update_layout(template="plotly_white", height=400); st.plotly_chart(fig, use_container_width=True)
 
             # Biggest wins
@@ -562,12 +569,14 @@ elif page == " Match Analysis":
             completed["goal_diff"] = abs(completed["intHomeScore"]-completed["intAwayScore"])
             big = completed.nlargest(10,"goal_diff")[["dateEvent","strHomeTeam","intHomeScore","intAwayScore","strAwayTeam","league"]].copy()
             big.columns = ["Date","Home","HG","AG","Away","League"]
+            st.caption("[Table] Biggest Wins: A dataframe showing the 10 matches with the largest goal difference (margin of victory). Columns: Date, Home, HG, AG, Away, League. Sorted by goal difference in descending order. This table showcases dominant performances and potential mismatches in the leagues. It can be useful for identifying teams that are either vastly superior to certain opponents or that have had particularly bad days.")
             st.dataframe(big, use_container_width=True, hide_index=True)
 
             # Highest scoring
             st.subheader(" Highest Scoring Matches")
             high = completed.nlargest(10,"total_goals")[["dateEvent","strHomeTeam","intHomeScore","intAwayScore","strAwayTeam","total_goals","league"]].copy()
             high.columns = ["Date","Home","HG","AG","Away","Total","League"]
+            st.caption("[Table] Highest Scoring Matches: A dataframe showing the 10 matches with the highest total goals (home + away combined). Columns: Date, Home, HG, AG, Away, Total (total goals), League. This table identifies the most open, attacking games of the season -- useful for identifying teams involved in end-to-end matches, or leagues/matchdays that produced unusually high-scoring encounters.")
             st.dataframe(high, use_container_width=True, hide_index=True)
 
 
@@ -671,24 +680,29 @@ elif page == " Championship Probability":
             fig = px.bar(res_df.sort_values("Champion %",ascending=True), x="Champion %", y="Team", orientation="h",
                 title=f"{sim_lg}  Championship ({n_sim:,} sims, {rem} remaining)", color="Champion %", color_continuous_scale="YlOrRd", text="Champion %")
             fig.update_traces(texttemplate="%{text:.1f}%",textposition="outside"); fig.update_layout(template="plotly_white",height=max(300,nt*40),showlegend=False)
+            st.caption("[Figure] Championship Probability: A horizontal bar chart showing the probability of each team winning the league title. Teams are sorted by championship probability (highest at the bottom for readability). Each bar's length represents the percentage chance (0-100%) and is color-coded using the YlOrRd (Yellow-Orange-Red) continuous color scale -- warmer colors indicate higher probabilities. The exact percentage is displayed as text outside each bar. The chart title includes the league name, number of simulations, and remaining matches. The height dynamically adjusts based on the number of teams (minimum 300px, 40px per team). This is the primary output of the Monte Carlo model and answers: 'Who is most likely to win the league?'")
             st.plotly_chart(fig, use_container_width=True)
 
             c1,c2 = st.columns(2)
             with c1:
                 fig = px.bar(res_df.sort_values(po_lab,ascending=True), x=po_lab, y="Team", orientation="h", color=po_lab, color_continuous_scale="Greens", text=po_lab, title=f"{po_lab.replace(' %','')} Probability")
                 fig.update_traces(texttemplate="%{text:.1f}%",textposition="outside"); fig.update_layout(template="plotly_white",height=max(300,nt*35),showlegend=False)
+                st.caption("[Figure] Playoff/Top N Probability: Displayed in the left column of a 2-column layout. This chart shows the probability of each team finishing in the top N positions (where N depends on the league format -- e.g., top 6 for Romanian Liga I playoff, top 3 for standard leagues). Uses the Greens color scale. Teams are sorted by probability. The label changes based on the league format: 'Playoff %' for leagues with playoff systems, 'Top 3 %' for standard leagues.")
                 st.plotly_chart(fig, use_container_width=True)
             with c2:
                 if (res_df["Relegation %"]>0).any():
                     rdf = res_df[res_df["Relegation %"]>0]
                     fig = px.bar(rdf.sort_values("Relegation %",ascending=True), x="Relegation %", y="Team", orientation="h", color="Relegation %", color_continuous_scale="Reds", text="Relegation %", title="Relegation Probability")
                     fig.update_traces(texttemplate="%{text:.1f}%",textposition="outside"); fig.update_layout(template="plotly_white",height=max(300,len(rdf)*35),showlegend=False)
+                    st.caption("[Figure] Relegation Probability: Displayed in the right column. Shows the probability of each team finishing in the relegation zone. Only teams with a non-zero relegation probability are included. Uses the Reds color scale. This chart only appears when at least one team has relegation risk. It answers: 'Which teams are most likely to go down?'")
                     st.plotly_chart(fig, use_container_width=True)
 
             st.subheader("Position Probability Matrix")
             hm = fc/n_sim*100
             fig = px.imshow(hm, x=[f"#{i+1}" for i in range(nt)], y=names.tolist(), color_continuous_scale="YlOrRd", text_auto=".1f", aspect="auto", title="Finish Position Heatmap")
+            st.caption("[Figure] Finish Position Heatmap: A 2D heatmap created with px.imshow. The y-axis lists all teams, the x-axis shows positions (#1, #2, #3, ... #N), and each cell contains the percentage of simulations in which that team finished in that position. The color scale is YlOrRd -- brighter/warmer cells indicate higher probabilities. Values are displayed as text in each cell (1 decimal place). This matrix provides the complete picture of positional uncertainty -- for example, a team might have a 60% chance of finishing 1st but also a 25% chance of finishing 2nd and a 15% chance of finishing 3rd. The height adjusts dynamically (minimum 300px, 40px per team).")
             fig.update_layout(template="plotly_white",height=max(300,nt*40)); st.plotly_chart(fig, use_container_width=True)
+            st.caption("[Table] Simulation Results: A dataframe showing the summary statistics for all teams: Team, Current Pts, Champion %, Playoff/Top N %, and Relegation %. This provides a quick-reference numerical version of all the visualizations above, suitable for precise comparison of probability values.")
             st.dataframe(res_df, use_container_width=True, hide_index=True)
 
 
@@ -721,19 +735,23 @@ elif page == " European Comparison":
         else:
             fig = px.bar(mdf.sort_values("Points Spread"), x="Points Spread", y="League", orientation="h", title="Competitiveness (Lower = Better)", color="Points Spread", color_continuous_scale="RdYlGn_r", text="Points Spread")
             fig.update_traces(texttemplate="%{text:.0f}",textposition="outside"); fig.update_layout(template="plotly_white",height=450,showlegend=False)
+            st.caption("[Figure] Competitiveness (Lower = Better): A horizontal bar chart showing the 'Points Spread' for each league, defined as the difference between the maximum and minimum points in the league table. A lower spread indicates a more competitive league (teams are closer together), while a higher spread suggests dominance by a few teams. Leagues are sorted by spread (lowest/most competitive at the bottom). The RdYlGn_r color scale is used -- green for low spread (competitive), red for high spread (uncompetitive). The exact value is displayed as text outside each bar. The chart title says 'Competitiveness (Lower = Better)'. This answers: 'Which league is the most competitive this season?' Height: 450px, plotly_white template.")
             st.plotly_chart(fig, use_container_width=True)
 
             c1,c2 = st.columns(2)
             with c1:
                 fig = px.bar(mdf.sort_values("Avg GF",ascending=True), x="Avg GF", y="League", orientation="h", title="Avg Goals Scored/Team", color="Avg GF", color_continuous_scale="Blues", text="Avg GF")
                 fig.update_traces(texttemplate="%{text:.1f}",textposition="outside"); fig.update_layout(template="plotly_white",height=400,showlegend=False)
+                st.caption("[Figure] Avg Goals Scored/Team: Displayed in the left column of a 2-column layout. Shows the average goals scored per team for each league. Leagues are sorted in ascending order. Uses the Blues color scale. This metric indicates attacking output -- leagues with higher averages tend to have more open, attacking football. The exact value is displayed with 1 decimal place.")
                 st.plotly_chart(fig, use_container_width=True)
             with c2:
                 fig = px.bar(mdf.sort_values("Coeff",ascending=True), x="Coeff", y="League", orientation="h", title="UEFA-style League Coefficient", color="Coeff", color_continuous_scale="Oranges", text="Coeff")
                 fig.update_traces(texttemplate="%{text:.2f}",textposition="outside"); fig.update_layout(template="plotly_white",height=400,showlegend=False)
+                st.caption("[Figure] UEFA-style League Coefficient: Displayed in the right column. Shows a pre-defined league strength coefficient (0.0 to 1.0) for each league, based on historical UEFA coefficient rankings. The English Premier League has the highest (1.00), while Romanian Liga II has the lowest (0.20). Uses the Oranges color scale. This coefficient is used in other parts of the dashboard (e.g., cross-league match predictions) to weight team strength by the quality of their league.")
                 st.plotly_chart(fig, use_container_width=True)
 
             st.subheader("League Leaders")
+            st.caption("[Table] League Leaders: A dataframe showing the league leader (first-place team), their maximum points, the number of teams in the league, and the league coefficient for each league. Sorted by maximum points in descending order. This provides a quick comparison of how dominant each league leader is.")
             st.dataframe(mdf[["League","Leader","Max Points","Teams","Coeff"]].sort_values("Max Points",ascending=False), use_container_width=True, hide_index=True)
 
             st.subheader("League Radar")
@@ -744,6 +762,7 @@ elif page == " European Comparison":
                 for _,r in rdf.iterrows():
                     fig.add_trace(go.Scatterpolar(r=[r[c] for c in cats]+[r[cats[0]]], theta=cats+[cats[0]], name=r["League"], fill="toself", opacity=0.5))
                 fig.update_layout(polar=dict(radialaxis=dict(visible=True)), template="plotly_white", height=500)
+                st.caption("[Figure] League Radar Chart: A radar/spider chart created with go.Scatterpolar. The user selects which leagues to compare via a multi-select dropdown (default: first 4 leagues). Each league is plotted as a polygon on axes representing: Avg Points, Avg GF (goals for), Avg GA (goals against), Points Spread, and Coeff (strength coefficient). The polygons are semi-transparent (opacity 0.5) and filled ('toself'). This visualization excels at showing the multi-dimensional profile of each league -- for example, the EPL might score highly on Coeff and Avg GF but also have high Avg GA (open games), while a league like the Greek Super League might be lower on all dimensions. Height: 500px, plotly_white template.")
                 st.plotly_chart(fig, use_container_width=True)
 
             # Cross-league value comparison
@@ -754,6 +773,7 @@ elif page == " European Comparison":
                 val_by = val_by.sort_values("Total Value (M)",ascending=True)
                 fig = px.bar(val_by, x="Total Value (M)", y="League", orientation="h", color="Avg Player Value (M)", color_continuous_scale="Viridis", text="Total Value (M)", title="Total Squad Value by League")
                 fig.update_traces(texttemplate="%{text:.0f}M",textposition="outside"); fig.update_layout(template="plotly_white",height=450,showlegend=False)
+                st.caption("[Figure] Total Squad Value by League: A horizontal bar chart showing the total estimated squad value (in millions of euros) for each league. The color of each bar represents the average player value in that league (Viridis color scale). This reveals the enormous financial gap between top-5 leagues (EPL, La Liga, Bundesliga, Serie A, Ligue 1) and smaller leagues (Romanian Liga I, Danish Superliga). The exact total value is displayed as text (e.g., '4500M'). Height: 450px.")
                 st.plotly_chart(fig, use_container_width=True)
 
 
@@ -782,11 +802,13 @@ elif page == " Player Analysis":
             with c1:
                 pc = f_players["strPosition"].value_counts().reset_index(); pc.columns=["Position","Count"]
                 fig = px.pie(pc, names="Position", values="Count", title="Position Distribution", hole=0.4)
+                st.caption("[Figure] Position Distribution: A donut-style pie chart (hole=0.4) showing the distribution of players by position across the filtered dataset. Positions include Goalkeeper, Defender, Centre-Back, Left-Back, Right-Back, Midfielder, Central Midfield, Defensive Midfield, Attacking Midfield, Forward, Striker, Left Winger, Right Winger, etc. This reveals the typical squad composition patterns -- most leagues have more defenders and midfielders than forwards and goalkeepers. Height: 400px, plotly_white template.")
                 fig.update_layout(template="plotly_white",height=400); st.plotly_chart(fig, use_container_width=True)
         if "strNationality" in f_players.columns:
             with c2:
                 nc = f_players["strNationality"].value_counts().head(20).reset_index(); nc.columns=["Nationality","Count"]
                 fig = px.bar(nc, x="Count", y="Nationality", orientation="h", title="Top 20 Nationalities", color="Count", color_continuous_scale="Blues")
+                st.caption("[Figure] Top 20 Nationalities: A horizontal bar chart showing the 20 most common nationalities among players in the filtered dataset. Each bar represents the count of players from that nationality. Uses the Blues color scale. This reveals which countries are the biggest exporters of football talent to European leagues. Common top nationalities include France, Brazil, England, Spain, Argentina, Germany, and the Netherlands. Height: 400px.")
                 fig.update_layout(template="plotly_white",height=400,showlegend=False); st.plotly_chart(fig, use_container_width=True)
 
         if "age" in f_players.columns:
@@ -795,6 +817,7 @@ elif page == " Player Analysis":
                 fig = px.histogram(va, x="age", nbins=25, title="Age Distribution", color_discrete_sequence=["#1f77b4"])
                 avg = va["age"].mean()
                 fig.add_vline(x=avg, line_dash="dash", line_color="red", annotation_text=f"Avg: {avg:.1f}")
+                st.caption("[Figure] Age Distribution: A histogram of player ages across the filtered dataset, limited to ages 15-50. The x-axis shows age in years, the y-axis shows the number of players. A vertical dashed red line marks the average age with an annotation (e.g., 'Avg: 25.3'). The distribution typically peaks around ages 22-27, reflecting the predominance of players in their physical prime. The shape reveals the age structure of the leagues -- a left-skewed peak suggests many young players, while a long right tail shows veteran presence. Uses 25 bins and blue bars (#1f77b4). Height: 400px.")
                 fig.update_layout(template="plotly_white",height=400); st.plotly_chart(fig, use_container_width=True)
 
         # Player comparison tool
@@ -815,6 +838,7 @@ elif page == " Player Analysis":
                             comp_data.append({"Attribute":label, p1:round(float(v1),1) if pd.notna(v1) else "-", p2:round(float(v2),1) if pd.notna(v2) else "-"})
                     for attr,label in [("strPosition","Position"),("strNationality","Nationality"),("strFoot","Preferred Foot"),("_teamName","Club"),("league","League")]:
                         comp_data.append({"Attribute":label, p1:str(r1.get(attr,"-")), p2:str(r2.get(attr,"-"))})
+                    st.caption("[Table] Player Comparison: A dataframe comparing two selected players across multiple attributes: Age, Value (M), Market Value (M), Position, Nationality, Preferred Foot, Club, and League. Numerical values are rounded to 1 decimal place. Missing values are shown as '-'. This tool is useful for evaluating transfer targets -- comparing a current squad player against a potential signing, or comparing two potential signings against each other.")
                     st.dataframe(pd.DataFrame(comp_data), use_container_width=True, hide_index=True)
 
         # Player database
@@ -822,6 +846,7 @@ elif page == " Player Analysis":
         dcols = ["strPlayer","strPosition","strNationality","_teamName","league","age","strHeight","strWeight","strNumber"]
         dcols = [c for c in dcols if c in f_players.columns]
         rn = {"strPlayer":"Player","strPosition":"Position","strNationality":"Nationality","_teamName":"Team","league":"League","age":"Age","strHeight":"Height","strWeight":"Weight","strNumber":"#"}
+        st.caption("[Table] Player Database: A scrollable dataframe showing all players matching the current filters. Columns: Player (name), Position, Nationality, Team (club), League, Age, Height, Weight, # (shirt number). The table has a fixed height of 500px for scrolling through large datasets. This is the master player reference table and can be filtered via the sidebar search box.")
         st.dataframe(f_players[dcols].rename(columns=rn), use_container_width=True, hide_index=True, height=500)
 
         # Attack vs Defense scatter
@@ -835,6 +860,7 @@ elif page == " Player Analysis":
             fig.update_traces(textposition="top center",textfont_size=7)
             fig.add_hline(y=sd["ga_pm"].median(),line_dash="dash",line_color="gray",opacity=0.4)
             fig.add_vline(x=sd["gf_pm"].median(),line_dash="dash",line_color="gray",opacity=0.4)
+            st.caption("[Figure] Goals Scored vs Conceded per Match: A scatter plot where each dot represents a team from the standings. The x-axis shows goals scored per match (GF/Match), the y-axis shows goals conceded per match (GA/Match), the dot size represents total points, and the color represents the league. Team names are displayed as text labels above each dot (font size 7). Horizontal and vertical dashed gray lines mark the median values, dividing the plot into four quadrants:  • Top-right: High-scoring but leaky defense (entertaining but inconsistent) • Top-left: Low-scoring and leaky (struggling teams) • Bottom-right: High-scoring with solid defense (title contenders -- ideal quadrant) • Bottom-left: Low-scoring but defensive (hard to beat but don't win enough)  This visualization is one of the most analytically powerful on the dashboard. Height: 600px, plotly_white template.")
             fig.update_layout(template="plotly_white",height=600); st.plotly_chart(fig, use_container_width=True)
 
 
@@ -875,9 +901,11 @@ Tip: Use Smart Scout to narrow down transfer targets for specific positions and 
                 fig = px.scatter(top_wk, x="age", y="est_value", color="pos_group", hover_name="strPlayer",
                     hover_data=["_teamName","league","strNationality"], size="potential_score", size_max=25,
                     title=f"Wonderkid Radar  U{max_age_wk} (min {min_val}M)", labels={"age":"Age","est_value":"Value (M)"})
+                st.caption("[Figure] Wonderkid Radar: A scatter plot where each dot represents a young player. The x-axis shows age, the y-axis shows estimated market value (in millions), the dot color represents position group (GK, DEF, MID, ATT), and the dot size represents the potential score. Hover data shows the player's club, league, and nationality. The chart title includes the age cutoff and minimum value. This plot visually maps the wonderkid landscape -- players in the upper-left (young and valuable) are the most sought-after talents. Height: 500px, plotly_white template.")
                 fig.update_layout(template="plotly_white",height=500); st.plotly_chart(fig, use_container_width=True)
                 disp = top_wk[["strPlayer","strPosition","age","strNationality","_teamName","league","est_value","potential_score"]].copy()
                 disp.columns = ["Player","Position","Age","Nationality","Club","League","Value (M)","Potential Score"]
+                st.caption("[Table] Top 30 Wonderkids: A dataframe listing the top 30 wonderkids sorted by potential score. Columns: Player, Position, Age, Nationality, Club, League, Value (M), Potential Score. This is the primary scouting shortlist output.")
                 st.dataframe(disp, use_container_width=True, hide_index=True)
 
                 # Nationality hotspots
@@ -885,6 +913,7 @@ Tip: Use Smart Scout to narrow down transfer targets for specific positions and 
                 nat_wk = top_wk["strNationality"].value_counts().head(15).reset_index()
                 nat_wk.columns = ["Nationality","Wonderkids"]
                 fig = px.bar(nat_wk, x="Wonderkids", y="Nationality", orientation="h", color="Wonderkids", color_continuous_scale="Purples")
+                st.caption("[Figure] Talent Hotspots by Nationality: A bar chart showing the top 15 nationalities producing wonderkids from the filtered results. Uses the Purples color scale. This identifies which countries are producing the most elite young talent -- useful for deciding where to establish scouting networks. Height: 350px.")
                 fig.update_layout(template="plotly_white",height=350,showlegend=False); st.plotly_chart(fig, use_container_width=True)
 
         with sc_tabs[1]:
@@ -908,6 +937,7 @@ Tip: Use Smart Scout to narrow down transfer targets for specific positions and 
             st.markdown(f"**{len(sdf)} players found**")
             disp = sdf.head(50)[["strPlayer","strPosition","age","strNationality","strFoot","_teamName","league","est_value","scout_rating"]].copy()
             disp.columns = ["Player","Position","Age","Nationality","Foot","Club","League","Value (M)","Scout Rating"]
+            st.caption("[Table] Smart Scout Results: A dataframe of up to 50 players matching the filter criteria, sorted by scout rating. Columns: Player, Position, Age, Nationality, Foot, Club, League, Value (M), Scout Rating. The count of total matching players is shown above the table (e.g., '235 players found'). This tool is the primary custom search interface for transfer analysts.")
             st.dataframe(disp, use_container_width=True, hide_index=True, height=600)
 
         with sc_tabs[2]:
@@ -928,6 +958,7 @@ Tip: Use Smart Scout to narrow down transfer targets for specific positions and 
                 sim = sim.sort_values("similarity",ascending=False).head(20)
                 disp = sim[["strPlayer","strPosition","age","strNationality","_teamName","league","est_value","similarity"]].copy()
                 disp.columns = ["Player","Position","Age","Nationality","Club","League","Value (M)","Similarity"]
+                st.caption("[Table] Similar Players: A dataframe listing the 20 most similar players to the reference. Columns: Player, Position, Age, Nationality, Club, League, Value (M), Similarity (0-1 scale). This is invaluable for identifying alternatives when a primary transfer target is unavailable.")
                 st.dataframe(disp, use_container_width=True, hide_index=True)
 
                 if len(sim)>2:
@@ -936,6 +967,7 @@ Tip: Use Smart Scout to narrow down transfer targets for specific positions and 
                         title=f"Players Similar to {ref_player}")
                     fig.add_trace(go.Scatter(x=[ref_age],y=[ref_val],mode="markers+text",text=[ref_player],
                         marker=dict(size=15,color="red",symbol="star"),name="Reference",textposition="top center"))
+                    st.caption("[Figure] Players Similar to [selected]: A scatter plot with age on the x-axis and value on the y-axis. Each dot represents a similar player, colored by similarity score (YlOrRd scale) and sized by similarity. The reference player is marked with a red star. This visualization shows how the reference player compares spatially to the similar players in the age-value plane. Height: 450px.")
                     fig.update_layout(template="plotly_white",height=450); st.plotly_chart(fig, use_container_width=True)
 
         with sc_tabs[3]:
@@ -958,14 +990,17 @@ Tip: Use Smart Scout to narrow down transfer targets for specific positions and 
                 total_v = xi_df["Value (M)"].sum()
                 avg_a = xi_df["Age"].mean() if "Age" in xi_df.columns else 0
                 st.markdown(f"**Best XI** ({bxi_mode})  Total Value: **{total_v:.1f}M**  Avg Age: **{avg_a:.1f}**")
+                st.caption("[Table] Best XI: A dataframe showing the 11 selected players with columns: Position (group), Player, Detailed Pos (specific position), Age, Club, Value (M), Nationality. Summary metrics are shown above: total squad value and average age. This tool is useful for identifying the strongest possible team a league could field, or for comparing league depth.")
                 st.dataframe(xi_df, use_container_width=True, hide_index=True)
 
         with sc_tabs[4]:
             st.subheader(" Market Value Distribution")
             val_pos = _ap.groupby("pos_group")["est_value"].agg(["mean","median","max","sum"]).reset_index()
             val_pos.columns = ["Position","Mean (M)","Median (M)","Max (M)","Total (M)"]
+            st.caption("[Table] Value by Position Summary: A dataframe showing aggregate statistics for each position group (GK, DEF, MID, ATT): Mean Value (M), Median Value (M), Max Value (M), and Total Value (M). This reveals which positions command the highest market values -- typically attackers and midfielders are valued highest.")
             st.dataframe(val_pos, use_container_width=True, hide_index=True)
             fig = px.box(_ap[_ap["est_value"]>0], x="pos_group", y="est_value", color="pos_group", title="Value Distribution by Position", labels={"pos_group":"Position","est_value":"Value (M)"})
+            st.caption("[Figure] Value Distribution by Position: A box plot showing the distribution of player market values for each position group. Each box shows the median, quartiles, and outliers. This reveals not just the average but the spread and outliers -- for example, the ATT group might have the highest median but also the most extreme outlier values (star strikers worth 100M+). Height: 400px, plotly_white template.")
             fig.update_layout(template="plotly_white",height=400,showlegend=False); st.plotly_chart(fig, use_container_width=True)
 
             # Value vs Age curve
@@ -974,6 +1009,7 @@ Tip: Use Smart Scout to narrow down transfer targets for specific positions and 
             age_val.columns = ["Age","Avg Value (M)"]
             fig = px.line(age_val, x="Age", y="Avg Value (M)", title="Average Player Value by Age", markers=True)
             fig.add_vline(x=27, line_dash="dash", annotation_text="Peak Value Age")
+            st.caption("[Figure] Average Player Value by Age: A line chart plotting the average market value by age (rounded to nearest year). A vertical dashed line at age 27 is annotated as 'Peak Value Age'. This curve typically shows values rising sharply from age 18-22, peaking around 26-28, then declining steadily after 30. This is the empirical age-value curve of European football and is fundamental to understanding transfer market dynamics. Players bought before the peak and sold near it maximize return on investment. Height: 400px, markers enabled.")
             fig.update_layout(template="plotly_white",height=400); st.plotly_chart(fig, use_container_width=True)
 
 
@@ -1019,7 +1055,9 @@ Tip: Teams with high xG but low actual goals are "unlucky" -- they may improve. 
                     ha_df = pd.DataFrame(ha_data).sort_values("HA Diff",ascending=False)
                     fig = px.bar(ha_df.head(20), x=["Home PPG","Away PPG"], y="Team", barmode="group", orientation="h",
                         title="Home vs Away PPG (Top 20 Home Advantage)", color_discrete_sequence=["#2ca02c","#d62728"])
+                    st.caption("[Figure] Home vs Away PPG (Top 20 Home Advantage): A grouped horizontal bar chart comparing Home PPG (points per game, green #2ca02c) and Away PPG (red #d62728) for the 20 teams with the biggest home advantage differential. Teams are sorted by HA Diff (Home PPG minus Away PPG) in descending order, so the team with the strongest home advantage appears at the top. This chart reveals which teams are 'fortress' teams at home but struggle away, and which teams are consistently good or bad regardless of venue. Height: 600px.")
                     fig.update_layout(template="plotly_white",height=600); st.plotly_chart(fig, use_container_width=True)
+                    st.caption("[Table] Home/Away Performance Data: A dataframe showing the top 30 teams with columns: Team, Home PPG, Away PPG, HA Diff (home advantage differential), Home GF (goals for at home), Home GA (goals against at home), Away GF, Away GA. This numerical data complements the chart and enables precise comparison.")
                     st.dataframe(ha_df[["Team","Home PPG","Away PPG","HA Diff","Home GF","Home GA","Away GF","Away GA"]].head(30), use_container_width=True, hide_index=True)
 
         with tac_tabs[1]:
@@ -1030,6 +1068,7 @@ Tip: Teams with high xG but low actual goals are "unlucky" -- they may improve. 
                 by_rd = comp.groupby("intRound")["total"].mean().reset_index()
                 by_rd.columns = ["Round","Avg Goals"]
                 fig = px.line(by_rd, x="Round", y="Avg Goals", title="Average Goals per Round", markers=True)
+                st.caption("[Figure] Average Goals per Round: A line chart showing the average total goals per match for each round/matchday across all filtered leagues. The x-axis shows the round number, the y-axis shows average goals. This reveals seasonal patterns -- early-season rounds might have fewer goals as teams are cautious, while late-season rounds might have more goals as teams chase results. Markers are enabled for each data point. Height: 400px.")
                 fig.update_layout(template="plotly_white",height=400); st.plotly_chart(fig, use_container_width=True)
 
                 # Team goals by round
@@ -1043,6 +1082,7 @@ Tip: Teams with high xG but low actual goals are "unlucky" -- they may improve. 
                     fig.add_trace(go.Bar(x=tm["intRound"],y=tm["gf"],name="Goals Scored",marker_color="#2ca02c"))
                     fig.add_trace(go.Bar(x=tm["intRound"],y=-tm["ga"],name="Goals Conceded",marker_color="#d62728"))
                     fig.update_layout(title=f"{tac_team}  Goals by Round",barmode="relative",template="plotly_white",height=400)
+                    st.caption("[Figure] Team Goals by Round: After the user selects a league and team, a bar chart shows that team's goals scored (green bars above zero) and goals conceded (red bars below zero) for each round. This uses a relative barmode, creating a mirrored effect that clearly shows the balance between attack and defense in each match. Rounds with tall green bars and short red bars represent dominant wins; the reverse represents heavy defeats. Height: 400px.")
                     st.plotly_chart(fig, use_container_width=True)
 
         with tac_tabs[2]:
@@ -1070,7 +1110,9 @@ Tip: Teams with high xG but low actual goals are "unlucky" -- they may improve. 
                     size="Actual", size_max=25, color_continuous_scale="RdYlGn", color_continuous_midpoint=0,
                     title=f"{xg_lg}  Attack vs Defense Strength (bubble = points)")
                 fig.add_hline(y=1,line_dash="dash",opacity=0.3); fig.add_vline(x=1,line_dash="dash",opacity=0.3)
+                st.caption("[Figure] Attack vs Defense Strength (bubble = points): A scatter plot where each team is plotted with Attack Strength on the x-axis and Defense Strength on the y-axis. The dot color represents Over/Under performance (actual points minus expected points), using the RdYlGn color scale centered at zero -- green dots are overperforming, red are underperforming. The dot size represents actual points. Dashed reference lines at x=1 and y=1 divide the plot into quadrants: teams in the bottom-right (high attack, low defense strength) are the strongest. The title includes the league name. Height: 500px.")
                 fig.update_layout(template="plotly_white",height=500); st.plotly_chart(fig, use_container_width=True)
+                st.caption("[Table] xG Model Results: A dataframe showing each team's Attack Strength, Defense Strength, Actual points, xPts (expected points), and Over/Under difference. Teams with positive Over/Under are exceeding their statistical expectation (possibly lucky or clinical), while negative values suggest underperformance (possibly unlucky or wasteful).")
                 st.dataframe(xpt_df, use_container_width=True, hide_index=True)
 
         with tac_tabs[3]:
@@ -1093,6 +1135,7 @@ Tip: Teams with high xG but low actual goals are "unlucky" -- they may improve. 
                     st.markdown(f"Squad: {pc.get('GK',0)} GK  {d_cnt} DEF  {m_cnt} MID  {a_cnt} ATT")
                     fig = px.bar(x=["GK","DEF","MID","ATT"], y=[pc.get("GK",0),d_cnt,m_cnt,a_cnt],
                         color=["GK","DEF","MID","ATT"], title=f"{fe_team} Squad Composition")
+                    st.caption("[Figure] Squad Composition: A simple bar chart showing the count of players in each position group (GK, DEF, MID, ATT) for the selected team. Each bar is colored by position group. This visualizes the raw squad composition data that drives the formation estimation. Height: 350px.")
                     fig.update_layout(template="plotly_white",height=350,showlegend=False); st.plotly_chart(fig, use_container_width=True)
 
         with tac_tabs[4]:
@@ -1115,6 +1158,7 @@ Tip: Teams with high xG but low actual goals are "unlucky" -- they may improve. 
                         cum = np.cumsum(pts_list)
                         fig.add_trace(go.Scatter(x=list(range(1,len(cum)+1)),y=cum,name=t,mode="lines+markers"))
                     fig.update_layout(title="Cumulative Points Over Season",xaxis_title="Match",yaxis_title="Points",template="plotly_white",height=500)
+                    st.caption("[Figure] Cumulative Points Over Season: A line chart showing the cumulative points trajectory for selected teams over the season. The x-axis shows match number (1, 2, 3, ...), and the y-axis shows total points accumulated. Each selected team gets its own colored line with markers. This is one of the most insightful charts on the dashboard -- it shows not just current standings but the shape of each team's season. A steep, consistent upward slope indicates a dominant team. A flattening curve suggests a loss of form. Crossing lines show when one team overtook another. The user selects a league and then picks teams to compare (default: first 3 teams). Height: 500px.")
                     st.plotly_chart(fig, use_container_width=True)
 
 
@@ -1183,6 +1227,7 @@ Tip: Use this before every match to prepare a tactical briefing.
         fig.add_trace(go.Scatterpolar(r=y_vals+[y_vals[0]], theta=cats+[cats[0]], name=your_team, fill="toself"))
         fig.add_trace(go.Scatterpolar(r=o_vals+[o_vals[0]], theta=cats+[cats[0]], name=opp_team, fill="toself"))
         fig.update_layout(polar=dict(radialaxis=dict(visible=True)),template="plotly_white",height=450,title="Strength Comparison")
+        st.caption("[Figure] Strength Comparison: A radar/spider chart comparing your team and the opponent across five dimensions: PPG (points per game), GF/M (goals for per match), GA/M (goals against per match), Win % (win percentage), and Clean Sheet Rate (percentage of matches without conceding). Both teams are plotted as semi-transparent filled polygons. This visualization instantly reveals each team's relative strengths and weaknesses. For example, if the opponent's polygon is larger on GF/M but smaller on GA/M, they score a lot but also concede a lot. Height: 450px.")
         st.plotly_chart(fig, use_container_width=True)
 
         # Opponent weaknesses
@@ -1224,6 +1269,7 @@ Tip: Use this before every match to prepare a tactical briefing.
                     "Avg Age":[round(sq_y["age"].mean(),1),round(sq_o["age"].mean(),1)],
                     "Total Value (M)":[round(sq_y["est_value"].sum(),1),round(sq_o["est_value"].sum(),1)],
                     "Avg Value (M)":[round(sq_y["est_value"].mean(),1),round(sq_o["est_value"].mean(),1)]}
+                st.caption("[Table] Squad Comparison: A dataframe comparing both squads across: Squad Size (number of players), Avg Age, Total Value (M), and Avg Value (M). This contextualizes the match beyond just results -- a team with a much higher squad value is expected to have more individual quality, while a younger squad might have more energy but less experience.")
                 st.dataframe(pd.DataFrame(comp_data), use_container_width=True, hide_index=True)
 
 
@@ -1265,13 +1311,16 @@ Tip: Compare Transfer Needs with Cross-League Scout to find affordable solutions
                 with sc1:
                     pc = squad.groupby("pos_group").agg(Count=("strPlayer","count"),Avg_Age=("age","mean"),Value=("est_value","sum")).reindex(["GK","DEF","MID","ATT"]).fillna(0)
                     pc["Avg_Age"]=pc["Avg_Age"].round(1); pc["Value"]=pc["Value"].round(1)
+                    st.caption("[Table] Position Group Statistics: A dataframe indexed by position group showing: Players (count), Avg Age, and Value (M) for GK, DEF, MID, and ATT. This table quantifies the depth and quality of each position group.")
                     pc.columns=["Players","Avg Age","Value (M)"]; st.dataframe(pc, use_container_width=True)
                 with sc2:
                     fig = px.pie(names=["GK","DEF","MID","ATT"],values=[pc.loc[g,"Players"] if g in pc.index else 0 for g in ["GK","DEF","MID","ATT"]],title="Composition")
+                    st.caption("[Figure] Composition: A pie chart showing the proportion of players in each position group (GK, DEF, MID, ATT). This reveals whether the squad is balanced. A typical balanced squad has roughly 2-3 GK, 6-9 DEF, 6-9 MID, and 4-7 ATT. Significant deviations suggest areas that need reinforcement or trimming. Height: 300px.")
                     fig.update_layout(height=300,margin=dict(t=40,b=10)); st.plotly_chart(fig, use_container_width=True)
                 squad["age_bucket"] = pd.cut(squad["age"],[15,21,24,28,31,40],labels=["U21","21-24","25-28","29-31","32+"])
                 ad = squad["age_bucket"].value_counts().reindex(["U21","21-24","25-28","29-31","32+"]).fillna(0)
                 fig = px.bar(x=ad.index,y=ad.values,color=ad.index,title="Age Profile")
+                st.caption("[Figure] Age Profile: A bar chart showing the number of players in each age bucket: U21 (under 21), 21-24, 25-28, 29-31, and 32+. Color-coded by bucket. This reveals the age structure of the squad -- a healthy squad has a bell-curve shape peaking at 25-28, with sufficient young players (U21, 21-24) for the future and limited 32+ players. Height: 300px.")
                 fig.update_layout(template="plotly_white",height=300,showlegend=False); st.plotly_chart(fig, use_container_width=True)
 
         with tr_tabs[1]:
@@ -1297,6 +1346,7 @@ Tip: Compare Transfer Needs with Cross-League Scout to find affordable solutions
                     if cnt<lo: needs.append({"Position":f"{grp} player","Priority":" HIGH","Reason":f"Only {cnt} (need {lo}-{hi})","pos_targets":[grp]})
                     elif ga>30: needs.append({"Position":f"Young {grp}","Priority":" MED","Reason":f"Avg age {ga:.1f}","pos_targets":[grp]})
             if not needs: needs.append({"Position":"Depth","Priority":" LOW","Reason":"Team OK","pos_targets":["ATT","MID","DEF"]})
+            st.caption("[Table] Transfer Needs: A dataframe listing identified needs with columns: Priority (HIGH/MED/LOW), Position (what type of player is needed), Reason (why -- e.g., 'Scoring gap: 0.45' or 'Only 3 DEF (need 6-9)'). High priority needs represent critical gaps that could significantly impact performance.")
             st.dataframe(pd.DataFrame(needs)[["Priority","Position","Reason"]], use_container_width=True, hide_index=True)
             if not _ap.empty:
                 st.markdown("---"); st.subheader(" Recommended Targets")
@@ -1312,6 +1362,7 @@ Tip: Compare Transfer Needs with Cross-League Scout to find affordable solutions
                     for _,r in c.iterrows():
                         all_tgt.append({"Need":n["Position"],"Player":r.get("strPlayer","?"),"Position":r.get("strPosition","?"),"Age":r.get("age","?"),"Club":r.get("_teamName","?"),"League":r.get("league","?"),"Value (M)":r.get("est_value",0)})
                 if all_tgt:
+                    st.caption("[Table] Recommended Targets: For each identified need, the system searches the player database for suitable targets from leagues of similar or lower market value, within the user's budget (set via a slider). Up to 5 targets per need are shown with columns: Need, Player, Position, Age, Club, League, Value (M). Targets are prioritized by age (21-29 preferred) and value.")
                     tdf = pd.DataFrame(all_tgt); st.dataframe(tdf, use_container_width=True, hide_index=True)
 
         with tr_tabs[2]:
@@ -1329,6 +1380,7 @@ Tip: Compare Transfer Needs with Cross-League Scout to find affordable solutions
                 sell = sq3.sort_values("sell_score",ascending=False).head(8)
                 sd = sell[["strPlayer","strPosition","age","strNationality","est_value"]].copy()
                 sd.columns = ["Player","Position","Age","Nationality","Value (M)"]
+                st.caption("[Table] Players to Sell: A dataframe of the top 8 sell candidates with columns: Player, Position, Age, Nationality, Value (M). Below the table, a success message shows the potential revenue from selling all listed players.")
                 st.dataframe(sd, use_container_width=True, hide_index=True)
                 st.success(f"**Potential revenue:** {sd['Value (M)'].sum():.1f}M")
 
@@ -1347,9 +1399,11 @@ Tip: Compare Transfer Needs with Cross-League Scout to find affordable solutions
                 sd = sd.sort_values("vs",ascending=False)
                 disp = sd.head(30)[["strPlayer","strPosition","age","strNationality","_teamName","league","est_value"]].copy()
                 disp.columns = ["Player","Position","Age","Nationality","Club","League","Value (M)"]
+                st.caption("[Table] Cross-League Scout Results: A dataframe of the top 30 value-for-money players across all leagues. Columns: Player, Position, Age, Nationality, Club, League, Value (M).")
                 st.dataframe(disp, use_container_width=True, hide_index=True)
                 if len(sd)>0:
                     fig = px.scatter(disp, x="Age", y="Value (M)", color="League", hover_name="Player", size="Value (M)", size_max=25, title="Scouting Map")
+                    st.caption("[Figure] Scouting Map: A scatter plot with Age on the x-axis and Value (M) on the y-axis, colored by league. Each dot is sized by value and hoverable to see the player name. This provides a visual map of where the scouting opportunities exist across the age-value landscape. Height: 500px.")
                     fig.update_layout(template="plotly_white",height=500); st.plotly_chart(fig, use_container_width=True)
 
 
@@ -1389,6 +1443,7 @@ Tip: Check Fixture Congestion before busy periods (cup + league matches) to plan
                 fig = px.scatter(sq, x="age", y="est_value", color="fitness_risk", hover_name="strPlayer",
                     hover_data=["strPosition","strNationality"], size="est_value", size_max=20,
                     title=f"{pm_team}  Squad Fitness Risk Map", color_discrete_map={" High":"red"," Medium":"orange"," Low":"green"})
+                st.caption("[Figure] Squad Fitness Risk Map: A scatter plot mapping each player by age (x-axis) and estimated value (y-axis). Dots are colored by fitness risk category: Red ('High') for players over 32, Orange ('Medium') for players 30-32, and Green ('Low') for players under 30. Dot size represents value. Hover data shows player name, position, and nationality. This plot visually identifies which valuable players are in the high-risk age zone -- losing them to injury would have the biggest impact. Height: 450px.")
                 fig.update_layout(template="plotly_white",height=450); st.plotly_chart(fig, use_container_width=True)
 
                 st.markdown("**Squad by Fitness Risk Category**")
@@ -1398,6 +1453,7 @@ Tip: Check Fixture Congestion before busy periods (cup + league matches) to plan
                         st.markdown(f"**{risk}** ({len(rdf)} players)")
                         disp = rdf[["strPlayer","strPosition","age","est_value"]].copy()
                         disp.columns = ["Player","Position","Age","Value (M)"]
+                        st.caption("[Table] Squad by Fitness Risk Category: Three separate tables (High, Medium, Low risk) listing players in each category with columns: Player, Position, Age, Value (M). Sorted by age descending within each category. This provides a quick reference for medical staff to prioritize monitoring of high-risk players.")
                         st.dataframe(disp.sort_values("Age",ascending=False), use_container_width=True, hide_index=True)
 
         with pm_tabs[1]:
@@ -1418,7 +1474,9 @@ Tip: Check Fixture Congestion before busy periods (cup + league matches) to plan
                 disp = sq[["strPlayer","strPosition","age","pos_group","injury_risk_score"]].head(15).copy()
                 disp.columns = ["Player","Position","Age","Group","Risk Score"]
                 fig = px.bar(disp, x="Risk Score", y="Player", orientation="h", color="Risk Score", color_continuous_scale="YlOrRd", title=f"{ir_team}  Injury Risk Ranking")
+                st.caption("[Figure] Injury Risk Ranking: A horizontal bar chart showing the top 15 players by injury risk score. Uses the YlOrRd color scale. Players with the highest scores (old attackers in thin position groups) appear at the top. This helps medical and coaching staff identify which players need the most careful load management. Height adjusts dynamically.")
                 fig.update_layout(template="plotly_white",height=max(300,len(disp)*35),showlegend=False); st.plotly_chart(fig, use_container_width=True)
+                st.caption("[Table] Injury Risk Data: A dataframe with columns: Player, Position, Age, Group (position group), Risk Score. Shows the top 15 highest-risk players.")
                 st.dataframe(disp, use_container_width=True, hide_index=True)
 
         with pm_tabs[2]:
@@ -1440,6 +1498,7 @@ Tip: Check Fixture Congestion before busy periods (cup + league matches) to plan
                     fig = px.line(tm_ev.iloc[1:], x="dateEvent", y="days_between", title=f"{fc_team}  Days Between Matches", markers=True)
                     fig.add_hline(y=3,line_dash="dash",line_color="red",annotation_text="High Risk (<3 days)")
                     fig.add_hline(y=7,line_dash="dash",line_color="green",annotation_text="Optimal (7+ days)")
+                    st.caption("[Figure] Days Between Matches: A line chart showing the number of days between consecutive matches over time. Two horizontal reference lines are drawn: a red dashed line at 3 days (labeled 'High Risk (<3 days)') and a green dashed line at 7 days (labeled 'Optimal (7+ days)'). Points that dip below the red line represent periods of dangerous fixture congestion where injury risk spikes. This chart is essential for planning rotation and rest periods. Height: 400px.")
                     fig.update_layout(template="plotly_white",height=400); st.plotly_chart(fig, use_container_width=True)
                 else: st.info("Not enough matches for analysis.")
             else: st.info("No event data with dates.")
@@ -1462,6 +1521,7 @@ Tip: Check Fixture Congestion before busy periods (cup + league matches) to plan
                         if not grp_df.empty:
                             disp = grp_df[["strPlayer","strPosition","age","est_value"]].copy()
                             disp.columns = ["Player","Position","Age","Value (M)"]
+                            st.caption("[Table] Rotation Planner: Four separate dataframes, one per position group, listing all players with columns: Player, Position, Age, Value (M). Sorted by value descending. Players at the top of each list are the presumed starters; those lower are rotation options. If a group is labeled 'Thin', the coaching staff should be cautious about rotating in that area.")
                             st.dataframe(disp, use_container_width=True, hide_index=True)
 
 
@@ -1496,13 +1556,16 @@ Tip: Use Development Potential to identify which youngsters deserve first-team o
                     by_team = u21.groupby("_teamName").size().sort_values(ascending=True).tail(15).reset_index()
                     by_team.columns = ["Team","U21 Players"]
                     fig = px.bar(by_team, x="U21 Players", y="Team", orientation="h", title="U21 Players by Team", color="U21 Players", color_continuous_scale="Greens")
+                    st.caption("[Figure] U21 Players by Team: A bar chart showing the top 15 teams by number of U21 players in the selected league. Uses the Greens color scale. This reveals which clubs invest most heavily in youth development. Clubs at the top either have strong academies or deliberately recruit young players. Height: 400px.")
                     fig.update_layout(template="plotly_white",height=400,showlegend=False); st.plotly_chart(fig, use_container_width=True)
                 with c2:
                     by_pos = u21["pos_group"].value_counts().reset_index(); by_pos.columns=["Position","Count"]
                     fig = px.pie(by_pos, names="Position", values="Count", title="U21 by Position", hole=0.4)
+                    st.caption("[Figure] U21 by Position: A donut pie chart showing the position distribution of U21 players: how many are goalkeepers, defenders, midfielders, and forwards. This reveals whether the youth pipeline is balanced or concentrated in certain positions. Height: 400px.")
                     fig.update_layout(template="plotly_white",height=400); st.plotly_chart(fig, use_container_width=True)
                 disp = u21[["strPlayer","strPosition","age","strNationality","_teamName","est_value"]].sort_values("est_value",ascending=False).head(30).copy()
                 disp.columns = ["Player","Position","Age","Nationality","Club","Value (M)"]
+                st.caption("[Table] Top 30 U21 Players: A dataframe of the 30 most valuable U21 players, sorted by estimated value. Columns: Player, Position, Age, Nationality, Club, Value (M). This is the quick reference for the highest-valued young talent in the selected league.")
                 st.dataframe(disp, use_container_width=True, hide_index=True)
 
         with ya_tabs[1]:
@@ -1517,6 +1580,7 @@ Tip: Use Development Potential to identify which youngsters deserve first-team o
                 top = young.head(20)
                 fig = px.bar(top, x="potential", y="strPlayer", orientation="h", color="pos_group", title=f"Top Development Potential  {dp_lg}",
                     hover_data=["_teamName","age","est_value"], labels={"potential":"Potential Score","strPlayer":"Player"})
+                st.caption("[Figure] Top Development Potential: A bar chart showing the top 20 players by development potential score in the selected league. Bars are colored by position group (GK, DEF, MID, ATT). Hover data shows club, age, and value. This chart identifies the youngsters with the highest growth ceiling and is key for deciding which academy products deserve first-team opportunities. Height adjusts dynamically.")
                 fig.update_layout(template="plotly_white",height=max(400,len(top)*35),showlegend=True); st.plotly_chart(fig, use_container_width=True)
 
         with ya_tabs[2]:
@@ -1529,7 +1593,9 @@ Tip: Use Development Potential to identify which youngsters deserve first-team o
                 ac_data = ac_data.round(1).sort_values("Total Value (M)",ascending=False)
                 fig = px.scatter(ac_data, x="U23 Players", y="Total Value (M)", size="Avg Value (M)", color="Avg Age",
                     hover_name="Team", size_max=25, color_continuous_scale="RdYlGn_r", title="Academy Strength  Youth Players vs Value")
+                st.caption("[Figure] Academy Strength  Youth Players vs Value: A scatter plot where each dot represents a club. The x-axis shows the number of U23 players, the y-axis shows the total value of U23 players, the dot size represents average value per U23 player, and the color represents average age (RdYlGn_r scale -- younger is greener). This multidimensional view identifies which clubs have the strongest youth departments -- clubs in the upper-right with green dots have many highly-valued young players. Height: 450px.")
                 fig.update_layout(template="plotly_white",height=450); st.plotly_chart(fig, use_container_width=True)
+                st.caption("[Table] Academy Comparison: A dataframe showing each team's U23 stats: Team, U23 Players, Avg Age, Total Value (M), Avg Value (M). Sorted by total value descending.")
                 st.dataframe(ac_data, use_container_width=True, hide_index=True)
 
         with ya_tabs[3]:
@@ -1538,6 +1604,7 @@ Tip: Use Development Potential to identify which youngsters deserve first-team o
             if not u21_all.empty:
                 nat = u21_all["strNationality"].value_counts().head(25).reset_index(); nat.columns=["Nationality","U21 Players"]
                 fig = px.bar(nat, x="U21 Players", y="Nationality", orientation="h", color="U21 Players", color_continuous_scale="Viridis", title="Top 25 Youth Talent Nationalities")
+                st.caption("[Figure] Top 25 Youth Talent Nationalities: A bar chart showing the 25 most common nationalities among U21 players across ALL leagues (not filtered by league). Uses the Viridis color scale. This global view identifies which countries produce the most young football talent entering European leagues. Common leaders include France, Germany, England, Spain, Brazil, Argentina, and the Netherlands. Height: 600px.")
                 fig.update_layout(template="plotly_white",height=600,showlegend=False); st.plotly_chart(fig, use_container_width=True)
 
 
@@ -1571,7 +1638,9 @@ Tip: Clubs with high Transfer ROI are getting more from less -- study their appr
                 val_by_team = val_by_team.round(1).sort_values("Squad Value (M)",ascending=False)
                 fig = px.bar(val_by_team, x="Squad Value (M)", y="Team", orientation="h", color="Avg Age", color_continuous_scale="RdYlGn_r", text="Squad Value (M)", title=f"{fin_lg}  Squad Values")
                 fig.update_traces(texttemplate="%{text:.0f}M",textposition="outside"); fig.update_layout(template="plotly_white",height=max(400,len(val_by_team)*35),showlegend=False)
+                st.caption("[Figure] Squad Values: A horizontal bar chart showing the total estimated squad value (in millions of euros) for each club in the selected league. Bars are colored by average squad age (RdYlGn_r scale -- younger squads appear greener). The exact value is displayed as text (e.g., '125M'). Sorted by value descending. This reveals the financial hierarchy within the league. Height adjusts dynamically.")
                 st.plotly_chart(fig, use_container_width=True)
+                st.caption("[Table] Squad Valuation Summary: A dataframe with columns: Team, Squad Value (M), Players, Avg Value (M), Star Player (M) (most valuable player's value), Avg Age. Sorted by squad value descending.")
                 st.dataframe(val_by_team, use_container_width=True, hide_index=True)
 
                 # Value vs Performance
@@ -1582,6 +1651,7 @@ Tip: Clubs with high Transfer ROI are getting more from less -- study their appr
                         fig = px.scatter(merged, x="Squad Value (M)", y="intPoints", hover_name="Team", size="Players",
                             color="intRank", color_continuous_scale="RdYlGn_r", title="Squad Value vs Points", text="Team")
                         fig.update_traces(textposition="top center",textfont_size=8)
+                        st.caption("[Figure] Squad Value vs Points: A scatter plot comparing squad value (x-axis) to league points (y-axis). Each dot represents a team, sized by squad size and colored by league rank (RdYlGn_r scale). Team names are shown as text labels. This visualization answers: 'Does spending more money lead to more points?' Teams above the regression line are overperforming relative to their investment; teams below are underperforming. This is one of the most important charts for evaluating transfer strategy effectiveness. Height: 500px.")
                         fig.update_layout(template="plotly_white",height=500); st.plotly_chart(fig, use_container_width=True)
 
         with fin_tabs[1]:
@@ -1597,12 +1667,14 @@ Tip: Clubs with high Transfer ROI are getting more from less -- study their appr
                     by_pos = by_pos.round(1)
                     fig = px.bar(by_pos, x="Position", y="Total (M)", color="Position", text="Total (M)", title=f"{wg_team}  Value by Position")
                     fig.update_traces(texttemplate="%{text:.1f}M"); fig.update_layout(template="plotly_white",height=350,showlegend=False)
+                    st.caption("[Figure] Value by Position: A bar chart showing the total value invested in each position group (GK, DEF, MID, ATT) for the selected team. Color-coded by position. The exact value is displayed as text. This reveals where the club's money is concentrated -- e.g., a team that has invested heavily in attack but neglected defense. Height: 350px.")
                     st.plotly_chart(fig, use_container_width=True)
 
                     # Top earners
                     top_val = sq.sort_values("est_value",ascending=False).head(10)
                     fig = px.bar(top_val, x="est_value", y="strPlayer", orientation="h", color="pos_group", title="Top 10 Most Valuable Players", text="est_value")
                     fig.update_traces(texttemplate="%{text:.1f}M",textposition="outside"); fig.update_layout(template="plotly_white",height=400)
+                    st.caption("[Figure] Top 10 Most Valuable Players: A bar chart showing the 10 most valuable players in the selected team's squad. Bars are colored by position group. The exact value is shown as text. This identifies the star players who represent the biggest investment and biggest potential sale value. Height: 400px.")
                     st.plotly_chart(fig, use_container_width=True)
 
         with fin_tabs[2]:
@@ -1622,6 +1694,7 @@ Tip: Clubs with high Transfer ROI are getting more from less -- study their appr
                     top_roi = roi_df.sort_values("Pts per M",ascending=False).head(20)
                     fig = px.bar(top_roi, x="Pts per M", y="Team", orientation="h", color="League", title="Best Value  Points per M Squad Value", text="Pts per M")
                     fig.update_traces(texttemplate="%{text:.1f}",textposition="outside"); fig.update_layout(template="plotly_white",height=600)
+                    st.caption("[Figure] Best Value  Points per M Squad Value: A bar chart showing the top 20 clubs across ALL leagues ranked by 'Points per M' (league points divided by squad value in millions). Teams are colored by league. This metric identifies the most efficient clubs -- those getting the most competitive bang for their financial buck. Lower-league teams with modest squads often rank highest because they achieve reasonable points totals with minimal investment. This chart challenges the assumption that spending equals success. Height: 600px.")
                     st.plotly_chart(fig, use_container_width=True)
 
         with fin_tabs[3]:
@@ -1641,7 +1714,9 @@ Tip: Clubs with high Transfer ROI are getting more from less -- study their appr
                 ffp_df = pd.DataFrame(ffp_data).sort_values("Value Ratio %",ascending=False)
                 fig = px.bar(ffp_df, x="Value Ratio %", y="Team", orientation="h", color="FFP Risk", title=f"{ffp_lg}  FFP Risk Assessment",
                     color_discrete_map={" Low":"green"," Medium":"orange"," High":"red"})
+                st.caption("[Figure] FFP Risk Assessment: A bar chart showing each team's Value Ratio % colored by risk level (green/orange/red). Teams spending far more than the league average are flagged as potential FFP concerns. Height adjusts dynamically.")
                 fig.update_layout(template="plotly_white",height=max(400,len(ffp_df)*30)); st.plotly_chart(fig, use_container_width=True)
+                st.caption("[Table] FFP Compliance: A dataframe with columns: Team, Squad Value (M), League Avg (M), Value Ratio %, FFP Risk, Avg Age, Squad Size. This provides all the data behind the risk classification.")
                 st.dataframe(ffp_df, use_container_width=True, hide_index=True)
 
 
@@ -1686,7 +1761,9 @@ Tip: ELO ratings update after every match -- teams on winning streaks climb quic
                 elo_df["ELO"] = elo_df["ELO"].round(0).astype(int)
                 fig = px.bar(elo_df, x="ELO", y="Team", orientation="h", color="ELO", color_continuous_scale="YlOrRd", text="ELO", title=f"{elo_lg}  ELO Ratings")
                 fig.update_traces(textposition="outside"); fig.update_layout(template="plotly_white",height=max(400,len(elo_df)*35),showlegend=False)
+                st.caption("[Figure] ELO Ratings: A bar chart showing the ELO rating for each team in the selected league. Sorted by ELO descending. Uses the YlOrRd color scale. The exact ELO value is displayed as text. Teams with ratings above 1500 have been winning more than expected; below 1500, they have been losing more than expected. The spread of ratings indicates how stratified the league is. Height adjusts dynamically.")
                 st.plotly_chart(fig, use_container_width=True)
+                st.caption("[Table] ELO Ratings Data: A dataframe with columns: Team and ELO (rounded to nearest integer).")
                 st.dataframe(elo_df, use_container_width=True, hide_index=True)
             else: st.info("No match data for ELO calculation.")
 
@@ -1704,10 +1781,12 @@ Tip: ELO ratings update after every match -- teams on winning streaks climb quic
             fig.add_trace(go.Bar(x=fp_df["strTeam"],y=fp_df["intPoints"],name="Current",marker_color="#1f77b4"))
             fig.add_trace(go.Bar(x=fp_df["strTeam"],y=fp_df["projected_pts"]-fp_df["intPoints"],name="Projected Gain",marker_color="#ff7f0e"))
             fig.update_layout(barmode="stack",title=f"Projected Final Points ({rem_matches} remaining)",template="plotly_white",height=450,xaxis_tickangle=-45)
+            st.caption("[Figure] Projected Final Points: A stacked bar chart where each team has two segments: the blue segment represents current points, and the orange segment represents the projected additional points. Teams are sorted by projected total points. This visualization clearly shows how much each team is expected to gain from the remaining matches and how the final table might look. Height: 450px.")
             st.plotly_chart(fig, use_container_width=True)
             disp = fp_df[["proj_rank","strTeam","intPoints","ppg","projected_pts"]].copy()
             disp.columns = ["Proj Rank","Team","Current Pts","PPG","Projected Pts"]
             disp["PPG"] = disp["PPG"].round(2)
+            st.caption("[Table] Projected Final Standings: A dataframe with columns: Proj Rank, Team, Current Pts, PPG (2 decimal places), Projected Pts. Sorted by projected points descending.")
             st.dataframe(disp, use_container_width=True, hide_index=True)
 
         with proj_tabs[2]:
@@ -1729,6 +1808,7 @@ Tip: ELO ratings update after every match -- teams on winning streaks climb quic
                             pts.append(p)
                         fig.add_trace(go.Scatter(x=list(range(1,len(pts)+1)),y=np.cumsum(pts),name=t,mode="lines+markers"))
                     fig.update_layout(title="Points Trajectory",xaxis_title="Match",yaxis_title="Cumulative Points",template="plotly_white",height=500)
+                    st.caption("[Figure] Points Trajectory: Identical in concept to the Momentum Tracker on the Tactical Analysis page -- a line chart showing cumulative points for selected teams over match number. The user selects a league and teams (default: top 5). This provides historical context for the projections -- teams with steepening curves are accelerating, while flattening curves suggest a slowdown. Height: 500px.")
                     st.plotly_chart(fig, use_container_width=True)
 
         with proj_tabs[3]:
@@ -1744,6 +1824,7 @@ Tip: ELO ratings update after every match -- teams on winning streaks climb quic
                 st.markdown("** Title Race**")
                 top5 = rc_df.head(5)[["intRank","strTeam","intPoints","gap_to_leader","ppg"]].copy()
                 top5.columns = ["Rank","Team","Points","Gap to Leader","PPG"]
+                st.caption("[Table] Title Race — Top 5: A dataframe showing the top 5 teams with columns: Rank, Team, Points, Gap to Leader (how far behind the leader), and PPG. This quantifies exactly how close the title race is.")
                 st.dataframe(top5, use_container_width=True, hide_index=True)
 
                 # Relegation battle (bottom 5)
@@ -1753,6 +1834,7 @@ Tip: ELO ratings update after every match -- teams on winning streaks climb quic
                 bot5["gap_to_safety"] = safe_line-bot5["intPoints"]
                 b5d = bot5[["intRank","strTeam","intPoints","gap_to_safety","ppg"]].copy()
                 b5d.columns = ["Rank","Team","Points","Gap to Safety","PPG"]
+                st.caption("[Table] Relegation Battle — Bottom 5: A dataframe showing the bottom 5 teams with columns: Rank, Team, Points, Gap to Safety (how far below the safety line), and PPG. Negative values indicate the team is below the safety line and in the relegation zone.")
                 st.dataframe(b5d, use_container_width=True, hide_index=True)
 
 
@@ -1789,8 +1871,10 @@ Tip: If a team's predicted points are higher than actual, they may be due for a 
                 tiers = ["Elite","Strong","Mid Table","Lower","Bottom","Relegation"]
                 lm = {c:tiers[i] for i,c in enumerate(co.index)}; pdf["Tier"] = pdf["Cluster"].map(lm)
                 fig = px.scatter(pdf, x="intGoalsFor", y="intGoalsAgainst", color="Tier", hover_name="strTeam", size="intPoints", size_max=25, title="Team Clustering")
+                st.caption("[Figure] Team Clustering: A scatter plot with Goals For on the x-axis and Goals Against on the y-axis. Each dot represents a team, colored by tier (Elite, Strong, Mid Table, etc.) and sized by total points. This visualization shows how the clustering algorithm has grouped teams -- elite teams cluster in the bottom-right (many goals scored, few conceded), while bottom-tier teams cluster in the top-left. Height: 550px.")
                 fig.update_layout(template="plotly_white",height=550); st.plotly_chart(fig, use_container_width=True)
                 cs = pdf.groupby("Tier").agg(Teams=("strTeam","count"),Avg_Pts=("intPoints","mean"),Avg_GF=("intGoalsFor","mean")).round(1).sort_values("Avg_Pts",ascending=False)
+                st.caption("[Table] Cluster Summary: A dataframe showing each tier with columns: Teams (count of teams in the tier), Avg_Pts (average points), and Avg_GF (average goals for). Sorted by average points descending.")
                 st.dataframe(cs, use_container_width=True)
 
         with ml_tabs[1]:
@@ -1804,7 +1888,9 @@ Tip: If a team's predicted points are higher than actual, they may be due for a 
                 fig.add_trace(go.Bar(x=rd["strTeam"],y=rd["intPoints"],name="Actual",marker_color="#1f77b4"))
                 fig.add_trace(go.Scatter(x=rd["strTeam"],y=rd["pred_pts"],name="Predicted",mode="markers+lines",marker=dict(size=8,color="#d62728")))
                 fig.update_layout(title="Actual vs Predicted Points",template="plotly_white",height=400,xaxis_tickangle=-45)
+                st.caption("[Figure] Actual vs Predicted Points: A combined bar and scatter chart. Blue bars show actual points for each team, while red dots connected by a line show the predicted points. Teams where the red dot is above the blue bar are underperforming their stats (should have more points based on their metrics), while the reverse suggests overperformance. Height: 400px.")
                 st.plotly_chart(fig, use_container_width=True)
+                st.caption("[Table] Regression Coefficients: A dataframe showing the three features (win_pct, gf_pm, ga_pm) and their regression coefficients. This reveals which stat matters most for accumulating points -- typically win percentage has the highest positive coefficient.")
                 st.dataframe(pd.DataFrame({"Feature":pf,"Coefficient":lr.coef_.round(2)}), use_container_width=True, hide_index=True)
 
         with ml_tabs[2]:
@@ -1859,6 +1945,7 @@ Tip: If a team's predicted points are higher than actual, they may be due for a 
                     st.metric("Model Accuracy (Test Set)", f"{acc*100:.1f}%")
                     fi = pd.DataFrame({"Feature":rf_df.columns[:-1],"Importance":rf.feature_importances_}).sort_values("Importance",ascending=False)
                     fig = px.bar(fi, x="Importance", y="Feature", orientation="h", title="Feature Importance", color="Importance", color_continuous_scale="Blues")
+                    st.caption("[Figure] Feature Importance: A bar chart showing the importance of each feature in the Random Forest model. Features are: h_ppg, h_gf, h_ga, h_wr (home team stats) and a_ppg, a_gf, a_ga, a_wr (away team stats). This reveals which statistics are most predictive of match outcomes. Typically, win rate and PPG are the most important, while goals against is often more predictive than goals for. Height: 350px.")
                     fig.update_layout(template="plotly_white",height=350,showlegend=False); st.plotly_chart(fig, use_container_width=True)
                 else: st.info("Not enough match data for Random Forest (need 50+).")
 
@@ -1896,6 +1983,7 @@ Tip: Teams with actual points above xPts may be "lucky" and due for regression. 
             gr = list(range(7)); probs = [poisson.pmf(g,tr["gf_rate"])*100 for g in gr]
             fig = px.bar(x=gr, y=probs, text=[f"{p:.1f}%" for p in probs], title=f"Goal Probability  {st_}")
             fig.update_traces(textposition="outside"); fig.update_layout(template="plotly_white",height=400)
+            st.caption("[Figure] Goal Probability: A bar chart showing the probability (as a percentage) of the team scoring 0 through 6 goals, based on the Poisson distribution with the team's average scoring rate as the lambda parameter. Each bar is labeled with the exact percentage. For a team averaging 1.5 goals/match, the most likely outcome is 1 goal (~33%), followed by 2 goals (~25%) and 0 goals (~22%). This is fundamental to expected goals models. Height: 400px.")
             st.plotly_chart(fig, use_container_width=True)
 
         with adv_tabs[1]:
@@ -1914,9 +2002,11 @@ Tip: Teams with actual points above xPts may be "lucky" and due for regression. 
             fig = go.Figure()
             fig.add_trace(go.Bar(x=xpdf["Team"],y=xpdf["Actual"],name="Actual",marker_color="#1f77b4"))
             fig.add_trace(go.Scatter(x=xpdf["Team"],y=xpdf["xPts"],name="xPts",mode="markers+lines",marker=dict(size=10,color="#d62728")))
+            st.caption("[Figure] Actual vs Expected Points: A combined bar and scatter chart identical in structure to the one in ML Models -- blue bars for actual points and red dots/line for xPts. Teams above the line are overperforming statistically. Height: 400px.")
             fig.update_layout(title="Actual vs Expected Points",template="plotly_white",height=400); st.plotly_chart(fig, use_container_width=True)
             fig = px.bar(xpdf.sort_values("Diff"), x="Diff", y="Team", orientation="h", color="Diff", color_continuous_scale="RdYlGn", color_continuous_midpoint=0, title="Over/Under Performance", text="Diff")
             fig.update_traces(texttemplate="%{text:+.1f}",textposition="outside"); fig.update_layout(template="plotly_white",height=350,showlegend=False)
+            st.caption("[Figure] Over/Under Performance: A bar chart showing the difference between actual and expected points for each team. Positive values (green) indicate overperformance, negative values (red) indicate underperformance. The color scale is RdYlGn centered at zero. Values are displayed as text with a +/- sign. This is one of the most analytically valuable charts -- it identifies teams whose results are unsustainable (either lucky or unlucky). Height: 350px.")
             st.plotly_chart(fig, use_container_width=True)
 
         with adv_tabs[2]:
@@ -1936,7 +2026,9 @@ Tip: Teams with actual points above xPts may be "lucky" and due for regression. 
                     fig = go.Figure()
                     fig.add_trace(go.Bar(x=fadf["Team"],y=fadf["Season PPG"],name="Season",marker_color="#1f77b4"))
                     fig.add_trace(go.Bar(x=fadf["Team"],y=fadf["Form PPG"],name="Recent Form",marker_color="#ff7f0e"))
+                    st.caption("[Figure] Season vs Form PPG: A grouped bar chart comparing Season PPG (blue) and Recent Form PPG (orange) for each team. Teams where the orange bar significantly exceeds the blue are on an upswing ('Rising'). Teams where blue exceeds orange are declining. This is essential for identifying momentum -- teams trending up may finish the season stronger than their current position suggests. Height: 400px.")
                     fig.update_layout(title="Season vs Form PPG",barmode="group",template="plotly_white",height=400); st.plotly_chart(fig, use_container_width=True)
+                    st.caption("[Table] Form Analysis: A dataframe with columns: Team, Form PPG, Season PPG, Trend (Rising/Declining). Sorted by Form PPG descending.")
                     st.dataframe(fadf, use_container_width=True, hide_index=True)
 
         with adv_tabs[3]:
@@ -1958,7 +2050,9 @@ Tip: Teams with actual points above xPts may be "lucky" and due for regression. 
                 if ci_data:
                     ci_df = pd.DataFrame(ci_data).sort_values("Consistency",ascending=False)
                     fig = px.bar(ci_df, x="Consistency", y="Team", orientation="h", color="Consistency", color_continuous_scale="RdYlGn", title="Consistency Index (1.0 = perfectly consistent)")
+                    st.caption("[Figure] Consistency Index (1.0 = perfectly consistent): A bar chart showing the consistency index for each team. Uses the RdYlGn color scale -- greener teams are more consistent. Teams at the top are the most predictable (they reliably win, or reliably draw, etc.), while teams at the bottom have wildly varying results. Consistency is often a hallmark of well-coached, well-organized teams. Height adjusts dynamically.")
                     fig.update_layout(template="plotly_white",height=max(400,len(ci_df)*30),showlegend=False); st.plotly_chart(fig, use_container_width=True)
+                    st.caption("[Table] Consistency Data: A dataframe with columns: Team, Avg PPG, Std Dev, Consistency. Sorted by consistency descending.")
                     st.dataframe(ci_df, use_container_width=True, hide_index=True)
 
 
@@ -1995,7 +2089,9 @@ Tip: Use Fixture Schedule to plan scouting trips or identify fixture congestion 
                 if not ref_stats.empty:
                     fig = px.bar(ref_stats.head(20), x="Avg Goals/Match", y="Referee", orientation="h", color="Matches", title="Referee Stats (min 3 matches)", text="Avg Goals/Match")
                     fig.update_traces(texttemplate="%{text:.2f}",textposition="outside"); fig.update_layout(template="plotly_white",height=500,showlegend=False)
+                    st.caption("[Figure] Referee Stats (min 3 matches): A bar chart showing the average goals per match for each referee who has officiated at least 3 matches. Colored by number of matches officiated. This reveals whether certain referees preside over more open, high-scoring games (which might indicate a more permissive refereeing style) or more defensive, low-scoring affairs. Sorted by number of matches. Top 20 referees shown. Height: 500px.")
                     st.plotly_chart(fig, use_container_width=True)
+                    st.caption("[Table] Referee Statistics: A dataframe with columns: Referee, Matches, Avg Goals/Match, Total Goals. Filtered to referees with at least 3 matches. This provides the numerical data for comparing referee tendencies.")
                     st.dataframe(ref_stats, use_container_width=True, hide_index=True)
                 else: st.info("No referee data with sufficient matches.")
             else: st.info("No referee data available.")
@@ -2010,11 +2106,13 @@ Tip: Use Fixture Schedule to plan scouting trips or identify fixture congestion 
                 v_stats.columns = ["Venue","Matches","Avg Goals","Home Team"]
                 v_stats["Avg Goals"]=v_stats["Avg Goals"].round(2)
                 v_stats = v_stats[v_stats["Matches"]>=2].sort_values("Avg Goals",ascending=False)
+                st.caption("[Table] Venue Statistics: A dataframe showing the 30 venues with the most matches, with columns: Venue (stadium name), Matches, Avg Goals, Home Team (most frequent home team). Filtered to venues with at least 2 matches.")
                 st.dataframe(v_stats.head(30), use_container_width=True, hide_index=True)
 
                 # Highest scoring venues
                 fig = px.bar(v_stats.head(15), x="Avg Goals", y="Venue", orientation="h", color="Matches", title="Highest Scoring Venues", text="Avg Goals")
                 fig.update_traces(texttemplate="%{text:.2f}",textposition="outside"); fig.update_layout(template="plotly_white",height=450,showlegend=False)
+                st.caption("[Figure] Highest Scoring Venues: A bar chart showing the 15 venues with the highest average goals per match. Colored by number of matches. This identifies which stadiums produce the most entertaining football -- useful for scheduling and broadcasting decisions. Height: 450px.")
                 st.plotly_chart(fig, use_container_width=True)
             else: st.info("No venue data available.")
 
@@ -2025,6 +2123,7 @@ Tip: Use Fixture Schedule to plan scouting trips or identify fixture congestion 
                 sch["month"] = sch["dateEvent"].dt.to_period("M").astype(str)
                 by_month = sch.groupby("month").size().reset_index(); by_month.columns=["Month","Matches"]
                 fig = px.bar(by_month, x="Month", y="Matches", title="Matches by Month", color="Matches", color_continuous_scale="Blues")
+                st.caption("[Figure] Matches by Month: A bar chart showing the number of matches played in each calendar month. Uses the Blues color scale. This reveals the distribution of fixtures across the season -- typically more matches in October-December and March-May, with fewer in January (winter break in some leagues) and June-August (off-season). Height: 400px.")
                 fig.update_layout(template="plotly_white",height=400,showlegend=False); st.plotly_chart(fig, use_container_width=True)
 
                 # Upcoming (unplayed)
@@ -2033,6 +2132,7 @@ Tip: Use Fixture Schedule to plan scouting trips or identify fixture congestion 
                     st.subheader(" Upcoming Fixtures")
                     ud = upcoming[["dateEvent","strHomeTeam","strAwayTeam","league"]].sort_values("dateEvent").head(30).copy()
                     ud.columns = ["Date","Home","Away","League"]
+                    st.caption("[Table] Upcoming Fixtures: A dataframe showing the next 30 unplayed fixtures (where home/away scores are still null). Columns: Date, Home, Away, League. Sorted by date ascending. This serves as a forward-looking fixture list for scheduling scouting trips, media coverage, or fan planning.")
                     st.dataframe(ud, use_container_width=True, hide_index=True)
             else: st.info("No fixture date data.")
 
@@ -2048,6 +2148,7 @@ Tip: Use Fixture Schedule to plan scouting trips or identify fixture congestion 
                     by_team["Avg Attendance"]=by_team["Avg Attendance"].round(0).astype(int)
                     fig = px.bar(by_team, x="Avg Attendance", y="Team", orientation="h", color="Avg Attendance", color_continuous_scale="Oranges", title="Average Home Attendance (Top 20)", text="Avg Attendance")
                     fig.update_traces(texttemplate="%{text:,}",textposition="outside"); fig.update_layout(template="plotly_white",height=500,showlegend=False)
+                    st.caption("[Figure] Average Home Attendance (Top 20): A bar chart showing the 20 teams with the highest average home attendance (where attendance data is available). Uses the Oranges color scale. The exact attendance figure is displayed with thousand separators (e.g., '75,000'). This reveals which clubs draw the biggest crowds and is an indicator of commercial strength and fan engagement. Height: 500px.")
                     st.plotly_chart(fig, use_container_width=True)
                 else: st.info("No attendance data with values.")
             else: st.info("No attendance data available.")
@@ -2094,6 +2195,7 @@ Tip: Combine Key Moments data with video to study decisive phases of important m
             rd = recent[["dateEvent","strHomeTeam","intHomeScore","intAwayScore","strAwayTeam","league"]].copy()
             rd["intHomeScore"]=rd["intHomeScore"].astype(int); rd["intAwayScore"]=rd["intAwayScore"].astype(int)
             rd.columns = ["Date","Home","HG","AG","Away","League"]
+            st.caption("[Table] Recent Results for Video Review: A dataframe showing the 20 most recent completed matches with columns: Date, Home, HG, AG, Away, League. This serves as a reference for identifying which recent matches to look up for video review, even when embedded video links are not available.")
             st.dataframe(rd, use_container_width=True, hide_index=True)
 
         with va_tabs[1]:
@@ -2115,6 +2217,7 @@ Tip: Combine Key Moments data with video to study decisive phases of important m
                 close = comp[comp["margin"]==1].sort_values("dateEvent",ascending=False).head(15)
                 cd = close[["dateEvent","strHomeTeam","intHomeScore","intAwayScore","strAwayTeam","league"]].copy()
                 cd.columns = ["Date","Home","HG","AG","Away","League"]
+                st.caption("[Table] Close Games — 1-Goal Margin: A dataframe showing the 15 most recent matches decided by exactly 1 goal. Columns: Date, Home, HG, AG, Away, League. These are the tightest, most dramatic matches and are the highest priority for video review.")
                 st.dataframe(cd, use_container_width=True, hide_index=True)
 
         with va_tabs[2]:
@@ -2132,6 +2235,7 @@ Tip: Combine Key Moments data with video to study decisive phases of important m
                     labels={"gf_pm":"Goals For/Match","ga_pm":"Goals Against/Match"},
                     color_discrete_map={"High":"red","Low":"green"})
                 fig.add_vline(x=sp_df["gf_pm"].median(),line_dash="dash",annotation_text="Median GF/M")
+                st.caption("[Figure] Set Piece Coaching Need (teams below median GF/M): A scatter plot with Goals For/Match on the x-axis and Goals Against/Match on the y-axis. Teams are colored by set piece need: Red ('High') for teams below the median GF/M and Green ('Low') for those above. A vertical dashed line marks the median GF/M. Teams in red -- especially those that also concede a lot (upper area) -- are the best candidates for set piece coaching investment, as improving set pieces could quickly boost their goal output. Height: 450px.")
                 fig.update_layout(template="plotly_white",height=450); st.plotly_chart(fig, use_container_width=True)
 
 
@@ -2160,6 +2264,7 @@ elif page == " Data Sources":
     st.subheader("Leagues Covered (2025-2026)")
     if not all_standings.empty:
         ls = all_standings.groupby("league").agg(Teams=("strTeam","nunique"),Avg_Pts=("intPoints","mean")).round(1).sort_values("Teams",ascending=False)
+        st.caption("[Table] Leagues Summary: A dynamically generated dataframe showing each league name, the number of unique teams, and the average points across all teams. Sorted by number of teams descending. This confirms exactly which 15 leagues are included and their current size.")
         st.dataframe(ls, use_container_width=True)
     st.subheader("Platform Modules")
     st.markdown("""
